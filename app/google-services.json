@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "952892124170",
+    "project_id": "aflstatsapp",
+    "storage_bucket": "aflstatsapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:952892124170:android:e977c77f412d5f2437c3f3",
+        "android_client_info": {
+          "package_name": "au.edu.utas.jc101.aflstatsapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWBPGXXSxKogpb16Sys6Kq7v0jHjiNqmE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -2,7 +2,10 @@ package au.edu.utas.jc101.aflstatsapp
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import au.edu.utas.jc101.aflstatsapp.databinding.ActivityMainBinding
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 
 class MainActivity : AppCompatActivity()
 {
@@ -15,6 +18,23 @@ class MainActivity : AppCompatActivity()
         setContentView(ui.root)
 
         ui.lblMainTitle.text = "Welcome to the AFL Stats App"
+
+        val db = Firebase.firestore
+        Log.d("FIREBASE", "Firebase connected: ${db.app.name}")
+
+        val testData = hashMapOf(
+            "message" to "Hello, World!",
+            "timestamp" to System.currentTimeMillis()
+        )
+
+        db.collection("Test").document("testData")
+            .set(testData)
+            .addOnSuccessListener {
+                Log.d("FIREBASE", "Document successfully written to Firestore!")
+            }
+            .addOnFailureListener { e ->
+                Log.w("FIREBASE", "Error writing document to Firestore", e)
+            }
     }
 }
 

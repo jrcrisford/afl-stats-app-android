@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Android Tutorial 5"
+rootProject.name = "AFLStatsApp"
 include(":app")
  
