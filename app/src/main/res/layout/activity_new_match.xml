@@ -24,7 +24,7 @@
             android:id="@+id/txtPlayerANumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Team A Name" />
+            android:hint="Team A Number" />
 
         <Button
             android:id="@+id/btnAddPlayerA"
@@ -60,7 +60,7 @@
             android:id="@+id/txtPlayerBNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Team B Name" />
+            android:hint="Team B Number" />
 
         <Button
             android:id="@+id/btnAddPlayerB"
