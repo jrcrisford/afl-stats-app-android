@@ -28,18 +28,53 @@
 
         <Button
             android:id="@+id/btnAddPlayerA"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Button" />
+            android:text="Add Player to Team A" />
 
         <TextView
             android:id="@+id/lblTeamAPlayers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:text="Team A Players:"
+            android:textStyle="bold"
+            android:paddingTop="12dp" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="24dp" />
+
+        <EditText
+            android:id="@+id/txtTeamBName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Team B Name" />
+
+        <EditText
+            android:id="@+id/txtPlayerBName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Player B Name" />
+
+        <EditText
+            android:id="@+id/txtPlayerBNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Team B Name" />
+
+        <Button
+            android:id="@+id/btnAddPlayerB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Player to Team B" />
+
+        <TextView
+            android:id="@+id/lblTeamBPlayers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Team B Players:"
+            android:textStyle="bold"
+            android:paddingTop="12dp" />
 
     </LinearLayout>
-
-
 </ScrollView>
