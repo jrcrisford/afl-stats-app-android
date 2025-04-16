@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/txtTeamAName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Team A Name" />
+
+        <EditText
+            android:id="@+id/txtPlayerAName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Player A Name" />
+
+        <EditText
+            android:id="@+id/txtPlayerANumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Team A Name" />
+
+        <Button
+            android:id="@+id/btnAddPlayerA"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Button" />
+
+        <TextView
+            android:id="@+id/lblTeamAPlayers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView" />
+
+
+    </LinearLayout>
+
+
+</ScrollView>

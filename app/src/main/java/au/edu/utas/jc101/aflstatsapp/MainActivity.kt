@@ -1,5 +1,6 @@
 package au.edu.utas.jc101.aflstatsapp
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -35,6 +36,12 @@ class MainActivity : AppCompatActivity()
             .addOnFailureListener { e ->
                 Log.w("FIREBASE", "Error writing document to Firestore", e)
             }
+
+        ui.btnNewMatch.setOnClickListener {
+            Log.d("BUTTON", "New Match button clicked")
+            val intent = Intent(this, NewMatchActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
 
