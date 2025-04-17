@@ -1,5 +1,6 @@
 package au.edu.utas.jc101.aflstatsapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -135,6 +136,11 @@ class NewMatchActivity : AppCompatActivity() {
                 .addOnSuccessListener {
                     Log.d("FIREBASE", "Match saved with ID: $matchId")
                     Toast.makeText(this, "Match Created.", Toast.LENGTH_SHORT).show()
+
+                    // Navigate to MatchTrackingActivity
+                    val intent = Intent(this, MatchTrackingActivity::class.java)
+                    intent.putExtra("matchId", matchId)
+                    startActivity(intent)
                 }
                 .addOnFailureListener { e ->
                     Log.w("FIREBASE", "Failed to save match", e)
@@ -145,7 +151,7 @@ class NewMatchActivity : AppCompatActivity() {
 
     // Check if both teams have enough players to start the match
     private fun checkIfReadyToStart() {
-        if (teamAPlayers.size >= 2 && teamBPlayers.size >= 2) {
+        if (teamAPlayers.size >= 1 && teamBPlayers.size >= 1) {
             Log.d("BUTTON", "Both teams have enough players to start the match")
         } else {
             Log.d("BUTTON", "Not enough players to start the match")
