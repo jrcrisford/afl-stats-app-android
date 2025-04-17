@@ -34,6 +34,41 @@ class NewMatchActivity : AppCompatActivity() {
 
         Log.d("NAVIGATION", "Navigated to NewMatchActivity")
 
+        // DEBUG: Prefill test data
+        val debugMode = true
+        if (debugMode) {
+            // Set team names
+            ui.txtTeamAName.setText("Dolphins")
+            ui.txtTeamBName.setText("Tigers")
+
+            // Add players directly to players lists
+            teamAPlayers.addAll(
+                listOf(
+                    Player("Charlie", 11, "Dolphins"),
+                    Player("Alice", 12, "Dolphins"),
+                    Player("Eve", 13, "Dolphins"),
+                    Player("Grace", 14, "Dolphins")
+                )
+            )
+
+            teamBPlayers.addAll(
+                listOf(
+                    Player("Daniel", 41, "Tigers"),
+                    Player("Bob", 42, "Tigers"),
+                    Player("Frank", 43, "Tigers"),
+                    Player("Heidi", 44, "Tigers")
+                )
+            )
+
+            // Update the team list UI manually
+            ui.lblTeamAPlayers.text = "Dolphins:\n" + teamAPlayers.joinToString("\n") { "${it.name} (#${it.number})" }
+            ui.lblTeamBPlayers.text = "Tigers:\n" + teamBPlayers.joinToString("\n") { "${it.name} (#${it.number})" }
+
+            // Update button text manually
+            ui.btnAddPlayerA.text = "Add Player to Dolphins"
+            ui.btnAddPlayerB.text = "Add Player to Tigers"
+        }
+
         // Add player to Team A and update UI
         ui.btnAddPlayerA.setOnClickListener {
             val name = ui.txtPlayerAName.text.toString().trim()
@@ -43,7 +78,7 @@ class NewMatchActivity : AppCompatActivity() {
             if (name.isNotEmpty() && number != null && teamName.isNotEmpty()) {
                 // Add player to Team A
                 teamAPlayers.add(Player(name, number, teamName))
-                Log.d("PLAYER", "Added player: $name (#$number) to $teamName")
+                Log.d("DEBUG", "Added player: $name (#$number) to $teamName")
 
                 // Update UI for Team A
                 ui.btnAddPlayerA.text = "Add Player to $teamName"
@@ -73,7 +108,7 @@ class NewMatchActivity : AppCompatActivity() {
             if (name.isNotEmpty() && number != null && teamName.isNotEmpty()) {
                 // Add player to Team B
                 teamBPlayers.add(Player(name, number, teamName))
-                Log.d("PLAYER", "Added player: $name (#$number) to $teamName")
+                Log.d("DEBUG", "Added player: $name (#$number) to $teamName")
 
                 // Update UI for Team B
                 ui.btnAddPlayerB.text = "Add Player to $teamName"
@@ -142,8 +177,8 @@ class NewMatchActivity : AppCompatActivity() {
                     intent.putExtra("matchId", matchId)
                     startActivity(intent)
                 }
-                .addOnFailureListener { e ->
-                    Log.w("FIREBASE", "Failed to save match", e)
+                .addOnFailureListener { exception ->
+                    Log.w("FIREBASE", "Failed to save match", exception)
                     Toast.makeText(this, "Failed to save match.", Toast.LENGTH_SHORT).show()
                 }
         }
@@ -151,10 +186,10 @@ class NewMatchActivity : AppCompatActivity() {
 
     // Check if both teams have enough players to start the match
     private fun checkIfReadyToStart() {
-        if (teamAPlayers.size >= 1 && teamBPlayers.size >= 1) {
-            Log.d("BUTTON", "Both teams have enough players to start the match")
+        if (teamAPlayers.size >= 2 && teamBPlayers.size >= 2) {
+            Log.d("DEBUG", "Both teams have enough players to start the match")
         } else {
-            Log.d("BUTTON", "Not enough players to start the match")
+            Log.d("DEBUG", "Not enough players to start the match")
         }
     }
 
