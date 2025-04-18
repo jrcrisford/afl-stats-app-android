@@ -20,6 +20,8 @@ class MatchTrackingActivity : AppCompatActivity() {
     private val players = mutableListOf<Player>()
     // Currently selected player from the spinner
     private var selectedPlayer: Player? = null
+    // Store the most recent action
+    private var lastAction: String? = "No previous action"
     // Score variable for both teams
     private var teamAGoals = 0
     private var teamABehinds = 0
@@ -180,33 +182,51 @@ class MatchTrackingActivity : AppCompatActivity() {
 
         val player = selectedPlayer!!
 
-        // Update the local player' stat based on the action type
+        // Update the local player's stat based on the action type and whether the action is valid
         when (actionType) {
             "kick" -> {
                 player.kicks++
+                lastAction = "kick"
                 Log.d("DEBUG", "Kick recorded for player: ${player.name}")
             }
             "handball" -> {
                 player.handballs++
+                lastAction = "handball"
                 Log.d("DEBUG", "Handball recorded for player: ${player.name}")
             }
             "mark" -> {
                 player.marks++
+                lastAction = "mark"
                 Log.d("DEBUG", "Mark recorded for player: ${player.name}")
             }
             "tackle" -> {
                 player.tackles++
+                lastAction = "tackle"
                 Log.d("DEBUG", "Tackle recorded for player: ${player.name}")
             }
             "goal" -> {
-                player.goals++
-                if (player.team == teamAName) teamAGoals++ else if (player.team == teamBName) teamBGoals++
-                Log.d("DEBUG", "Goal recorded for player: ${player.name}")
+                if (lastAction == "kick") {
+                    player.goals++
+                    lastAction = "goal"
+                    if (player.team == teamAName) teamAGoals++ else if (player.team == teamBName) teamBGoals++
+                    Log.d("DEBUG", "Goal recorded for player: ${player.name}")
+                } else {
+                    Log.w("DEBUG", "Goal action not allowed after ${lastAction}")
+                    Toast.makeText(this, "Goal action not allowed after ${lastAction}", Toast.LENGTH_SHORT).show()
+                    return
+                }
             }
             "behind" -> {
-                player.behinds++
-                if (player.team == teamAName) teamABehinds++ else if (player.team == teamBName) teamBBehinds++
-                Log.d("DEBUG", "Behind recorded for player: ${player.name}")
+                if (lastAction == "kick" || lastAction == "handball") {
+                    player.behinds++
+                    lastAction = "behind"
+                    if (player.team == teamAName) teamABehinds++ else if (player.team == teamBName) teamBBehinds++
+                    Log.d("DEBUG", "Behind recorded for player: ${player.name}")
+                } else {
+                    Log.w("DEBUG", "Behind action not allowed after ${lastAction}")
+                    Toast.makeText(this, "Behind action not allowed after ${lastAction}", Toast.LENGTH_SHORT).show()
+                    return
+                }
             }
             else -> {
                 Log.w("DEBUG", "Unknown action type: $actionType")
