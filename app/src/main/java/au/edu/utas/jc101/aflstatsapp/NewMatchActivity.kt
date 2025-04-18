@@ -8,20 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import au.edu.utas.jc101.aflstatsapp.databinding.ActivityNewMatchBinding
 import com.google.firebase.firestore.FirebaseFirestore
 
-// Player class containing player details and game stats
-data class Player(
-    val id: String,
-    val name: String,
-    val number: Int,
-    val team: String,
-    var kicks: Int = 0,
-    var handballs: Int = 0,
-    var marks: Int = 0,
-    var tackles: Int = 0,
-    var goals: Int = 0,
-    var behinds: Int = 0,
-)
-
 class NewMatchActivity : AppCompatActivity() {
     private lateinit var ui: ActivityNewMatchBinding
     private val teamAPlayers = mutableListOf<Player>()
