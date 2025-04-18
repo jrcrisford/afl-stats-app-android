@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import au.edu.utas.jc101.aflstatsapp.databinding.ActivityMatchTrackingBinding
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 
 class MatchTrackingActivity : AppCompatActivity() {
@@ -22,6 +23,8 @@ class MatchTrackingActivity : AppCompatActivity() {
     private var selectedPlayer: Player? = null
     // Store the most recent action
     private var lastAction: String? = "No previous action"
+    // Store the match start time
+    private var startTime: Long = 0L
     // Score variable for both teams
     private var teamAGoals = 0
     private var teamABehinds = 0
@@ -94,6 +97,8 @@ class MatchTrackingActivity : AppCompatActivity() {
                 if (document.exists()) {
                     val rawPlayerStats = document.get("playerStats") as? Map<String, Any>
                     val scoreData = document.get("score") as? Map<String, Any>
+                    startTime = document.getTimestamp("startedAt")?.toDate()?.time ?: 0L
+
                     teamAName = document.getString("teamAName") ?: ""
                     teamBName = document.getString("teamBName") ?: ""
 
@@ -114,7 +119,8 @@ class MatchTrackingActivity : AppCompatActivity() {
                                 marks = (playerDataMap["marks"] as? Long)?.toInt() ?: 0,
                                 tackles = (playerDataMap["tackles"] as? Long)?.toInt() ?: 0,
                                 goals = (playerDataMap["goals"] as? Long)?.toInt() ?: 0,
-                                behinds = (playerDataMap["behinds"] as? Long)?.toInt() ?: 0
+                                behinds = (playerDataMap["behinds"] as? Long)?.toInt() ?: 0,
+                                actionTimestamps = mutableListOf()
                             )
                             players.add(player)
                             Log.d("DEBUG", "Loaded player: $player")
@@ -181,6 +187,11 @@ class MatchTrackingActivity : AppCompatActivity() {
         }
 
         val player = selectedPlayer!!
+        val currentTime = Timestamp.now()
+        val elapsedTime = currentTime.toDate().time - startTime
+        val minutes = (elapsedTime / 1000) / 60
+        val seconds = (elapsedTime / 1000) % 60
+        val formattedTime = String.format("%d:%02d", minutes, seconds)
 
         // Update the local player's stat based on the action type and whether the action is valid
         when (actionType) {
@@ -212,7 +223,11 @@ class MatchTrackingActivity : AppCompatActivity() {
                     Log.d("DEBUG", "Goal recorded for player: ${player.name}")
                 } else {
                     Log.w("DEBUG", "Goal action not allowed after ${lastAction}")
-                    Toast.makeText(this, "Goal action not allowed after ${lastAction}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        "Goal action not allowed after ${lastAction}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     return
                 }
             }
@@ -224,7 +239,11 @@ class MatchTrackingActivity : AppCompatActivity() {
                     Log.d("DEBUG", "Behind recorded for player: ${player.name}")
                 } else {
                     Log.w("DEBUG", "Behind action not allowed after ${lastAction}")
-                    Toast.makeText(this, "Behind action not allowed after ${lastAction}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        "Behind action not allowed after ${lastAction}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     return
                 }
             }
@@ -234,6 +253,19 @@ class MatchTrackingActivity : AppCompatActivity() {
             }
         }
 
+        // Record the action timestamp and update Firestore
+        player.actionTimestamps.add(mapOf("action" to actionType, "timestamp" to formattedTime))
+        Log.d("DEBUG", "Action recorded at $formattedTime for player: ${player.name}")
+        updateFirestore(player, actionType)
+        updateScoreDisplay()
+    }
+
+    /**
+     * Updates the Firestore database with the player's action and the current score.
+     * @param player The player whose action is being recorded.
+     * @param actionType The type of action performed by the player.
+     */
+    private fun updateFirestore(player: Player, actionType: String) {
         // Prepare updated player data for Firestore
         val playerData = hashMapOf(
             "name" to player.name,
@@ -244,7 +276,8 @@ class MatchTrackingActivity : AppCompatActivity() {
             "marks" to player.marks,
             "tackles" to player.tackles,
             "goals" to player.goals,
-            "behinds" to player.behinds
+            "behinds" to player.behinds,
+            "actionTimestamps" to player.actionTimestamps
         )
 
         // Prepare updated team score data
