@@ -20,6 +20,13 @@ class MatchTrackingActivity : AppCompatActivity() {
     private val players = mutableListOf<Player>()
     // Currently selected player from the spinner
     private var selectedPlayer: Player? = null
+    // Score variable for both teams
+    private var teamAGoals = 0
+    private var teamABehinds = 0
+    private var teamBGoals = 0
+    private var teamBBehinds = 0
+    private var teamAName: String = ""
+    private var teamBName: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,6 +91,9 @@ class MatchTrackingActivity : AppCompatActivity() {
             .addOnSuccessListener { document ->
                 if (document.exists()) {
                     val rawPlayerStats = document.get("playerStats") as? Map<String, Any>
+                    val scoreData = document.get("score") as? Map<String, Any>
+                    teamAName = document.getString("teamAName") ?: ""
+                    teamBName = document.getString("teamBName") ?: ""
 
                     // Clear the old player data
                     players.clear()
@@ -109,8 +119,17 @@ class MatchTrackingActivity : AppCompatActivity() {
                         }
                     }
 
+                    // Load inital team scores
+                    teamAGoals = ((scoreData?.get("teamA") as? Map<*, *>)?.get("goals") as? Long)?.toInt() ?: 0
+                    teamABehinds = ((scoreData?.get("teamA") as? Map<*, *>)?.get("behinds") as? Long)?.toInt() ?: 0
+                    teamBGoals = ((scoreData?.get("teamB") as? Map<*, *>)?.get("goals") as? Long)?.toInt() ?: 0
+                    teamBBehinds = ((scoreData?.get("teamB") as? Map<*, *>)?.get("behinds") as? Long)?.toInt() ?: 0
+
+                    // Update the score display UI
+                    updateScoreDisplay()
+
                     // Update spinner with player names
-                    val playerNames = players.map { it.name }
+                    val playerNames = players.map { "${it.name} #${it.number}" }
                     val adapter = ArrayAdapter(
                         this,
                         android.R.layout.simple_spinner_item,
@@ -129,8 +148,8 @@ class MatchTrackingActivity : AppCompatActivity() {
                                 id: Long
                             ) {
                                 selectedPlayer = players[position]
-                                ui.txtSelectedPlayer.text = "Selected Player: $selectedPlayer"
-                                Log.d("DEBUG", "Selected Player: $selectedPlayer")
+                                ui.txtSelectedPlayer.text = "Selected Player: ${selectedPlayer?.name} #${selectedPlayer?.number}"
+                                Log.d("DEBUG", "Selected Player: ${selectedPlayer?.name} #${selectedPlayer?.number}")
                             }
 
                             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -181,10 +200,12 @@ class MatchTrackingActivity : AppCompatActivity() {
             }
             "goal" -> {
                 player.goals++
+                if (player.team == teamAName) teamAGoals++ else if (player.team == teamBName) teamBGoals++
                 Log.d("DEBUG", "Goal recorded for player: ${player.name}")
             }
             "behind" -> {
                 player.behinds++
+                if (player.team == teamAName) teamABehinds++ else if (player.team == teamBName) teamBBehinds++
                 Log.d("DEBUG", "Behind recorded for player: ${player.name}")
             }
             else -> {
@@ -206,16 +227,39 @@ class MatchTrackingActivity : AppCompatActivity() {
             "behinds" to player.behinds
         )
 
+        // Prepare updated team score data
+        val scoreData = hashMapOf(
+            "score.teamA.goals" to teamAGoals,
+            "score.teamA.behinds" to teamABehinds,
+            "score.teamB.goals" to teamBGoals,
+            "score.teamB.behinds" to teamBBehinds,
+            "score.teamA.score" to (teamAGoals * 6 + teamABehinds),
+            "score.teamB.score" to (teamBGoals * 6 + teamBBehinds)
+        )
+
         // Update the player data in Firestore
         db.collection("matches")
             .document(matchId)
-            .update("playerStats.${player.id}", playerData)
+            .update(mapOf("playerStats.${player.id}" to playerData) + scoreData)
             .addOnSuccessListener {
                 Log.d("FIREBASE", "Action recorded for player: ${player.name}")
                 Toast.makeText(this, "${actionType.replaceFirstChar { it.uppercase() }} recorded for ${player.name}", Toast.LENGTH_SHORT).show()
+
+                // Update the score display UI
+                updateScoreDisplay()
             }
             .addOnFailureListener { exception ->
                 Log.e("FIREBASE", "Error recording action", exception)
             }
+    }
+
+    /**
+    * Updates the score display on the UI with the current scores for both teams.
+    */
+    private fun updateScoreDisplay() {
+        val teamAScore = "$teamAGoals.$teamABehinds (${teamAGoals * 6 + teamABehinds})"
+        val teamBScore = "$teamBGoals.$teamBBehinds (${teamBGoals * 6 + teamBBehinds})"
+
+        ui.txtScore.text = "$teamAName: $teamAScore vs $teamBName: $teamBScore"
     }
 }

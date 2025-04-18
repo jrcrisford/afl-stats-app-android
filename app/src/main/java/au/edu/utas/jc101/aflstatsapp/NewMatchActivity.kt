@@ -115,8 +115,14 @@ class NewMatchActivity : AppCompatActivity() {
                 "teamBName" to teamBName,
                 "startedAt" to timestamp,
                 "score" to mapOf(
-                    "teamA" to mapOf("goals" to 0, "behinds" to 0),
-                    "teamB" to mapOf("goals" to 0, "behinds" to 0)),
+                    "teamA" to mapOf(
+                        "goals" to 0,
+                        "behinds" to 0,
+                        "totalScore" to 0),
+                    "teamB" to mapOf(
+                        "goals" to 0,
+                        "behinds" to 0,
+                        "totalScore" to 0)),
                 "playerStats" to playerStats
                 )
 
