@@ -45,10 +45,11 @@ class MatchTrackingActivity : AppCompatActivity() {
                     val rawPlayerStats = document.get("playerStats") as? Map<String, Any>
 
                     players.clear()
-                    rawPlayerStats?.forEach { (_, playerData) ->
+                    rawPlayerStats?.forEach { (playerId, playerData) ->
                         val playerDataMap = playerData as? Map<String, Any>
                         if (playerDataMap != null) {
                             val player = Player(
+                                id = playerId,
                                 name = playerDataMap["name"] as? String ?: "",
                                 number = (playerDataMap["number"] as? Long)?.toInt() ?: 0,
                                 team = playerDataMap["team"] as? String ?: "",
@@ -103,5 +104,26 @@ class MatchTrackingActivity : AppCompatActivity() {
 
     }
 
-    // Record action function TODO
+    private fun recordAction(actionType: String) {
+        if (selectedPlayer == null) {
+            Log.w("DEBUG", "No player selected to record action to")
+            return
+        }
+
+        val player = selectedPlayer!!
+
+        when (actionType) {
+            "kick" -> player.kicks++
+            "handball" -> player.handballs++
+            "mark" -> player.marks++
+            "tackle" -> player.tackles++
+            "goal" -> player.goals++
+            "behind" -> player.behinds++
+            else -> {
+                Log.w("DEBUG", "Unknown action type: $actionType")
+                return
+            }
+        }
+
+    }
 }

@@ -10,15 +10,16 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 // Player class containing player details and game stats
 data class Player(
+    val id: String,
     val name: String,
     val number: Int,
     val team: String,
-    val kicks: Int = 0,
-    val handballs: Int = 0,
-    val marks: Int = 0,
-    val tackles: Int = 0,
-    val goals: Int = 0,
-    val behinds: Int = 0,
+    var kicks: Int = 0,
+    var handballs: Int = 0,
+    var marks: Int = 0,
+    var tackles: Int = 0,
+    var goals: Int = 0,
+    var behinds: Int = 0,
 )
 
 class NewMatchActivity : AppCompatActivity() {
@@ -37,36 +38,7 @@ class NewMatchActivity : AppCompatActivity() {
         // DEBUG: Prefill test data
         val debugMode = true
         if (debugMode) {
-            // Set team names
-            ui.txtTeamAName.setText("Dolphins")
-            ui.txtTeamBName.setText("Tigers")
-
-            // Add players directly to players lists
-            teamAPlayers.addAll(
-                listOf(
-                    Player("Charlie", 11, "Dolphins"),
-                    Player("Alice", 12, "Dolphins"),
-                    Player("Eve", 13, "Dolphins"),
-                    Player("Grace", 14, "Dolphins")
-                )
-            )
-
-            teamBPlayers.addAll(
-                listOf(
-                    Player("Daniel", 41, "Tigers"),
-                    Player("Bob", 42, "Tigers"),
-                    Player("Frank", 43, "Tigers"),
-                    Player("Heidi", 44, "Tigers")
-                )
-            )
-
-            // Update the team list UI manually
-            ui.lblTeamAPlayers.text = "Dolphins:\n" + teamAPlayers.joinToString("\n") { "${it.name} (#${it.number})" }
-            ui.lblTeamBPlayers.text = "Tigers:\n" + teamBPlayers.joinToString("\n") { "${it.name} (#${it.number})" }
-
-            // Update button text manually
-            ui.btnAddPlayerA.text = "Add Player to Dolphins"
-            ui.btnAddPlayerB.text = "Add Player to Tigers"
+            prefillData()
         }
 
         // Add player to Team A and update UI
@@ -77,7 +49,8 @@ class NewMatchActivity : AppCompatActivity() {
 
             if (name.isNotEmpty() && number != null && teamName.isNotEmpty()) {
                 // Add player to Team A
-                teamAPlayers.add(Player(name, number, teamName))
+                val newPlayer = createPlayer(name, number, teamName)
+                teamAPlayers.add(newPlayer)
                 Log.d("DEBUG", "Added player: $name (#$number) to $teamName")
 
                 // Update UI for Team A
@@ -107,7 +80,8 @@ class NewMatchActivity : AppCompatActivity() {
 
             if (name.isNotEmpty() && number != null && teamName.isNotEmpty()) {
                 // Add player to Team B
-                teamBPlayers.add(Player(name, number, teamName))
+                val newPlayer = createPlayer(name, number, teamName)
+                teamBPlayers.add(newPlayer)
                 Log.d("DEBUG", "Added player: $name (#$number) to $teamName")
 
                 // Update UI for Team B
@@ -184,6 +158,56 @@ class NewMatchActivity : AppCompatActivity() {
         }
     }
 
+    // Function that creates a Player object and assigns a unique ID
+    private fun createPlayer(name: String, number: Int, team: String): Player {
+        val tempPlayer = Player(
+            id = "",
+            name = name,
+            number = number,
+            team = team
+        )
+        return tempPlayer.copy(id = generatePlayerID(tempPlayer))
+    }
+
+    // Helper function to generate a unique player ID
+    private fun generatePlayerID(player: Player): String {
+        return "${player.name}_${player.number}_${player.team}"
+    }
+
+    // DEBUG: Prefill test data for debugging
+    private fun prefillData() {
+        // Create Player objects
+        teamAPlayers.addAll(
+            listOf(
+                createPlayer("Charlie", 11, "Dolphins"),
+                createPlayer("Alice", 12, "Dolphins"),
+                createPlayer("Eve", 13, "Dolphins"),
+                createPlayer("Grace", 14, "Dolphins")
+            )
+        )
+
+        teamBPlayers.addAll(
+            listOf(
+                createPlayer("Daniel", 41, "Tigers"),
+                createPlayer("Bob", 42, "Tigers"),
+                createPlayer("Frank", 43, "Tigers"),
+                createPlayer("Heidi", 44, "Tigers")
+            )
+        )
+
+        // Set team names manually
+        ui.txtTeamAName.setText("Dolphins")
+        ui.txtTeamBName.setText("Tigers")
+
+        // Update the team list UI manually
+        ui.lblTeamAPlayers.text = "Dolphins:\n" + teamAPlayers.joinToString("\n") { "${it.name} (#${it.number})" }
+        ui.lblTeamBPlayers.text = "Tigers:\n" + teamBPlayers.joinToString("\n") { "${it.name} (#${it.number})" }
+
+        // Update button text manually
+        ui.btnAddPlayerA.text = "Add Player to Dolphins"
+        ui.btnAddPlayerB.text = "Add Player to Tigers"
+    }
+
     // Check if both teams have enough players to start the match
     private fun checkIfReadyToStart() {
         if (teamAPlayers.size >= 2 && teamBPlayers.size >= 2) {
@@ -191,10 +215,5 @@ class NewMatchActivity : AppCompatActivity() {
         } else {
             Log.d("DEBUG", "Not enough players to start the match")
         }
-    }
-
-    // Helper function to generate a unique player ID
-    private fun generatePlayerID(player: Player): String {
-        return "${player.team}_${player.number}_${player.name.hashCode()}"
     }
 }
