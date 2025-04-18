@@ -1,5 +1,6 @@
 package au.edu.utas.jc101.aflstatsapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -41,7 +42,7 @@ class MatchTrackingActivity : AppCompatActivity() {
             Log.e("DEBUG", "Match ID is empty, cannot load match data")
         }
 
-        // Set action button listeners
+        // Set action and end button listeners
         ui.btnKick.setOnClickListener { recordAction("kick") }
         ui.btnHandball.setOnClickListener { recordAction("handball") }
         ui.btnMark.setOnClickListener { recordAction("mark") }
@@ -49,7 +50,26 @@ class MatchTrackingActivity : AppCompatActivity() {
         ui.btnGoal.setOnClickListener { recordAction("goal") }
         ui.btnBehind.setOnClickListener { recordAction("behind") }
         ui.btnEndMatch.setOnClickListener {
-            // TODO End match logic here
+            val timestamp = com.google.firebase.Timestamp.now()
+
+            // Update the match document in Firestore to set the end time
+            db.collection("matches")
+                .document(matchId)
+                .update("endedAt", timestamp)
+                .addOnSuccessListener {
+                    Log.d("FIREBASE", "Match ended successfully at $timestamp")
+                    Toast.makeText(this, "Match ended successfully", Toast.LENGTH_SHORT).show()
+
+                    // Return to the main activity
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                    finish()
+                }
+                .addOnFailureListener { exception ->
+                    Log.e("FIREBASE", "Error ending match", exception)
+                    Toast.makeText(this, "Error ending match", Toast.LENGTH_SHORT).show()
+                }
             Log.d("DEBUG", "End Match button clicked")
         }
     }
