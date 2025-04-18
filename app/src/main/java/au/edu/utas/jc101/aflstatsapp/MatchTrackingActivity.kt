@@ -15,7 +15,9 @@ class MatchTrackingActivity : AppCompatActivity() {
     private lateinit var db: FirebaseFirestore
     private lateinit var matchId: String
 
+    // List to store all players loaded from Firestore
     private val players = mutableListOf<Player>()
+    // Currently selected player from the spinner
     private var selectedPlayer: Player? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,17 +27,21 @@ class MatchTrackingActivity : AppCompatActivity() {
 
         Log.d("NAVIGATION", "Navigated to MatchTrackingActivity")
 
+        // Get the match ID from the intent
         matchId = intent.getStringExtra("matchId") ?: ""
         Log.d("DEBUG", "Loaded Match ID: $matchId")
 
+        // Initialize Firestore database
         db = FirebaseFirestore.getInstance()
 
+        // Load match and player data if match ID is valid
         if (matchId.isNotEmpty()) {
             loadMatchData()
         } else {
-            Log.e("DEBUG", "Match ID is empty")
+            Log.e("DEBUG", "Match ID is empty, cannot load match data")
         }
 
+        // Set action button listeners
         ui.btnKick.setOnClickListener { recordAction("kick") }
         ui.btnHandball.setOnClickListener { recordAction("handball") }
         ui.btnMark.setOnClickListener { recordAction("mark") }
@@ -48,6 +54,9 @@ class MatchTrackingActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Loads match data from Firestore and populates the player spinner.
+     */
     private fun loadMatchData() {
         db.collection("matches")
             .document(matchId)
@@ -56,7 +65,10 @@ class MatchTrackingActivity : AppCompatActivity() {
                 if (document.exists()) {
                     val rawPlayerStats = document.get("playerStats") as? Map<String, Any>
 
+                    // Clear the old player data
                     players.clear()
+
+                    // Parse each player entry and add it to the local list
                     rawPlayerStats?.forEach { (playerId, playerData) ->
                         val playerDataMap = playerData as? Map<String, Any>
                         if (playerDataMap != null) {
@@ -73,11 +85,11 @@ class MatchTrackingActivity : AppCompatActivity() {
                                 behinds = (playerDataMap["behinds"] as? Long)?.toInt() ?: 0
                             )
                             players.add(player)
+                            Log.d("DEBUG", "Loaded player: $player")
                         }
                     }
 
-                    Log.d("DEBUG", "Players Loaded: $players")
-
+                    // Update spinner with player names
                     val playerNames = players.map { it.name }
                     val adapter = ArrayAdapter(
                         this,
@@ -87,6 +99,7 @@ class MatchTrackingActivity : AppCompatActivity() {
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                     ui.spinnerPlayers.adapter = adapter
 
+                    // Set the spinner listener to update the selected player
                     ui.spinnerPlayers.onItemSelectedListener =
                         object : AdapterView.OnItemSelectedListener {
                             override fun onItemSelected(
@@ -116,6 +129,10 @@ class MatchTrackingActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Records the action for the selected player locally and updates Firestore.
+     * @param actionType The type of action to record (kick, handball, mark, tackle, goal, behind).
+     */
     private fun recordAction(actionType: String) {
         if (selectedPlayer == null) {
             Log.w("DEBUG", "No player selected to record action to")
@@ -124,6 +141,7 @@ class MatchTrackingActivity : AppCompatActivity() {
 
         val player = selectedPlayer!!
 
+        // Update the local player' stat based on the action type
         when (actionType) {
             "kick" -> {
                 player.kicks++
@@ -155,6 +173,7 @@ class MatchTrackingActivity : AppCompatActivity() {
             }
         }
 
+        // Prepare updated player data for Firestore
         val playerData = hashMapOf(
             "name" to player.name,
             "number" to player.number,
@@ -167,6 +186,7 @@ class MatchTrackingActivity : AppCompatActivity() {
             "behinds" to player.behinds
         )
 
+        // Update the player data in Firestore
         db.collection("matches")
             .document(matchId)
             .update("playerStats.${player.id}", playerData)
