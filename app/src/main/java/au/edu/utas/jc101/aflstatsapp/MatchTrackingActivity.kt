@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import au.edu.utas.jc101.aflstatsapp.databinding.ActivityMatchTrackingBinding
 import com.google.firebase.firestore.FirebaseFirestore
@@ -33,6 +34,17 @@ class MatchTrackingActivity : AppCompatActivity() {
             loadMatchData()
         } else {
             Log.e("DEBUG", "Match ID is empty")
+        }
+
+        ui.btnKick.setOnClickListener { recordAction("kick") }
+        ui.btnHandball.setOnClickListener { recordAction("handball") }
+        ui.btnMark.setOnClickListener { recordAction("mark") }
+        ui.btnTackle.setOnClickListener { recordAction("tackle") }
+        ui.btnGoal.setOnClickListener { recordAction("goal") }
+        ui.btnBehind.setOnClickListener { recordAction("behind") }
+        ui.btnEndMatch.setOnClickListener {
+            // TODO End match logic here
+            Log.d("DEBUG", "End Match button clicked")
         }
     }
 
@@ -113,17 +125,57 @@ class MatchTrackingActivity : AppCompatActivity() {
         val player = selectedPlayer!!
 
         when (actionType) {
-            "kick" -> player.kicks++
-            "handball" -> player.handballs++
-            "mark" -> player.marks++
-            "tackle" -> player.tackles++
-            "goal" -> player.goals++
-            "behind" -> player.behinds++
+            "kick" -> {
+                player.kicks++
+                Log.d("DEBUG", "Kick recorded for player: ${player.name}")
+            }
+            "handball" -> {
+                player.handballs++
+                Log.d("DEBUG", "Handball recorded for player: ${player.name}")
+            }
+            "mark" -> {
+                player.marks++
+                Log.d("DEBUG", "Mark recorded for player: ${player.name}")
+            }
+            "tackle" -> {
+                player.tackles++
+                Log.d("DEBUG", "Tackle recorded for player: ${player.name}")
+            }
+            "goal" -> {
+                player.goals++
+                Log.d("DEBUG", "Goal recorded for player: ${player.name}")
+            }
+            "behind" -> {
+                player.behinds++
+                Log.d("DEBUG", "Behind recorded for player: ${player.name}")
+            }
             else -> {
                 Log.w("DEBUG", "Unknown action type: $actionType")
                 return
             }
         }
 
+        val playerData = hashMapOf(
+            "name" to player.name,
+            "number" to player.number,
+            "team" to player.team,
+            "kicks" to player.kicks,
+            "handballs" to player.handballs,
+            "marks" to player.marks,
+            "tackles" to player.tackles,
+            "goals" to player.goals,
+            "behinds" to player.behinds
+        )
+
+        db.collection("matches")
+            .document(matchId)
+            .update("playerStats.${player.id}", playerData)
+            .addOnSuccessListener {
+                Log.d("FIREBASE", "Action recorded for player: ${player.name}")
+                Toast.makeText(this, "${actionType.replaceFirstChar { it.uppercase() }} recorded for ${player.name}", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { exception ->
+                Log.e("FIREBASE", "Error recording action", exception)
+            }
     }
 }
