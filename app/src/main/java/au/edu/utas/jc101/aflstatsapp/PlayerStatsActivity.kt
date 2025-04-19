@@ -106,7 +106,42 @@ class PlayerStatsActivity : AppCompatActivity() {
     }
 
     private fun loadPlayers() {
-        return
+        db.collection("matches")
+            .document(selectedMatch!!)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val rawPlayerStats = document.get("playerStats") as? Map<String, Any>
+                    allPlayers.clear()
+
+                    rawPlayerStats?.forEach { (playerId, playerData) ->
+                        val playerDataMap = playerData as? Map<String, Any>
+                        if (playerDataMap != null) {
+                            val player = Player(
+                                id = playerId,
+                                name = playerDataMap["name"] as? String ?: "",
+                                number = (playerDataMap["number"] as? Long)?.toInt() ?: 0,
+                                team = playerDataMap["team"] as? String ?: "",
+                                kicks = (playerDataMap["kicks"] as? Long)?.toInt() ?: 0,
+                                handballs = (playerDataMap["handballs"] as? Long)?.toInt() ?: 0,
+                                marks = (playerDataMap["marks"] as? Long)?.toInt() ?: 0,
+                                tackles = (playerDataMap["tackles"] as? Long)?.toInt() ?: 0,
+                                goals = (playerDataMap["goals"] as? Long)?.toInt() ?: 0,
+                                behinds = (playerDataMap["behinds"] as? Long)?.toInt() ?: 0,
+                                actionTimestamps = mutableListOf()
+                            )
+                            allPlayers.add(player)
+                        }
+                    }
+                    Log.d("DEBUG", "Players loaded for match $selectedMatch: $allPlayers")
+                    filterTeams()
+                } else {
+                    Log.w("DEBUG", "No such match document")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e("FIREBASE", "Failed loading players", exception)
+            }
     }
 
     private fun filterTeams() {
