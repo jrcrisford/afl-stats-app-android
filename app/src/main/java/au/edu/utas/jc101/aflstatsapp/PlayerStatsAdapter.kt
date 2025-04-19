@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class PlayerStatAdapter(private val players: List<Player>) : RecyclerView.Adapter<PlayerStatAdapter.PlayerStatViewHolder>() {
+class PlayerStatsAdapter(private val players: List<Player>) : RecyclerView.Adapter<PlayerStatsAdapter.PlayerStatViewHolder>() {
 
     class PlayerStatViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val playerName: TextView = view.findViewById(R.id.txtPlayerNameNumber)
