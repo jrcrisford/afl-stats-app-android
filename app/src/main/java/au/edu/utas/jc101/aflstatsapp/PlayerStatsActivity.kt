@@ -18,7 +18,10 @@ class PlayerStatsActivity : AppCompatActivity() {
     private lateinit var db: FirebaseFirestore
 
     private var allPlayers = mutableListOf<Player>()
+    private var selectedPlayers = mutableListOf<Player>()
     private var selectedTeam: String = "Both"
+    private var selectedMatch: String? = null
+    private val matchList = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,8 +31,31 @@ class PlayerStatsActivity : AppCompatActivity() {
         Log.d("NAVIGATION", "Navigated to PlayerStatsActivity")
 
         db = FirebaseFirestore.getInstance()
-
         ui.playerStatsRecyclerView.layoutManager = LinearLayoutManager(this)
+
+        // Set up match selection spinner
+        val matchAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, matchList)
+        matchAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        ui.spinnerMatchSelection.adapter = matchAdapter
+
+        ui.spinnerMatchSelection.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                selectedMatch = matchList.getOrNull(position)
+                if (selectedMatch != null) {
+                    loadPlayers()
+                }
+
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                selectedMatch = null
+            }
+        }
 
         // Set up team filter spinner
         val teamOptions = listOf("Both", "Team A", "Team B")
@@ -59,6 +85,16 @@ class PlayerStatsActivity : AppCompatActivity() {
             finish()
         }
 
+        // Load match list from Firestore
+        loadMatchList()
+    }
+
+    private fun loadMatchList() {
+        return
+    }
+
+    private fun loadPlayers() {
+        return
     }
 
     private fun filterTeams() {
