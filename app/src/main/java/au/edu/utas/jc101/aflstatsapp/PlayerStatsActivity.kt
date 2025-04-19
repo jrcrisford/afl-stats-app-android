@@ -90,7 +90,19 @@ class PlayerStatsActivity : AppCompatActivity() {
     }
 
     private fun loadMatchList() {
-        return
+        db.collection("matches")
+            .get()
+            .addOnSuccessListener { documents ->
+                matchList.clear()
+                for (document in documents) {
+                    matchList.add(document.id)
+                }
+                (ui.spinnerMatchSelection.adapter as ArrayAdapter<*>).notifyDataSetChanged()
+                Log.d("DEBUG", "Match list loaded: $matchList")
+            }
+            .addOnFailureListener { exception ->
+                Log.e("DEBUG", "Failed loading matches", exception)
+            }
     }
 
     private fun loadPlayers() {

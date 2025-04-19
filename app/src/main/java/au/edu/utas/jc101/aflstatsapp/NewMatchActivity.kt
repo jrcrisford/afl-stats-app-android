@@ -171,33 +171,33 @@ class NewMatchActivity : AppCompatActivity() {
         // Create Player objects
         teamAPlayers.addAll(
             listOf(
-                createPlayer("Charlie", 11, "Dolphins"),
-                createPlayer("Alice", 12, "Dolphins"),
-                createPlayer("Eve", 13, "Dolphins"),
-                createPlayer("Grace", 14, "Dolphins")
+                createPlayer("Charlie", 11, "Cats"),
+                createPlayer("Alice", 12, "Cats"),
+                createPlayer("Eve", 13, "Cats"),
+                createPlayer("Grace", 14, "Cats")
             )
         )
 
         teamBPlayers.addAll(
             listOf(
-                createPlayer("Daniel", 41, "Tigers"),
-                createPlayer("Bob", 42, "Tigers"),
-                createPlayer("Frank", 43, "Tigers"),
-                createPlayer("Heidi", 44, "Tigers")
+                createPlayer("Daniel", 41, "Eagles"),
+                createPlayer("Bob", 42, "Eagles"),
+                createPlayer("Frank", 43, "Eagles"),
+                createPlayer("Heidi", 44, "Eagles")
             )
         )
 
         // Set team names manually
-        ui.txtTeamAName.setText("Dolphins")
-        ui.txtTeamBName.setText("Tigers")
+        ui.txtTeamAName.setText("Cats")
+        ui.txtTeamBName.setText("Eagles")
 
         // Update the team list UI manually
         ui.lblTeamAPlayers.text = "Dolphins:\n" + teamAPlayers.joinToString("\n") { "${it.name} (#${it.number})" }
         ui.lblTeamBPlayers.text = "Tigers:\n" + teamBPlayers.joinToString("\n") { "${it.name} (#${it.number})" }
 
         // Update button text manually
-        ui.btnAddPlayerA.text = "Add Player to Dolphins"
-        ui.btnAddPlayerB.text = "Add Player to Tigers"
+        ui.btnAddPlayerA.text = "Add Player to Cats"
+        ui.btnAddPlayerB.text = "Add Player to Eagles"
     }
 
     // Check if both teams have enough players to start the match
