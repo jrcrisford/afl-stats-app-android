@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    card_view:cardCornerRadius="8dp"
+    android:layout_margin="8dp"
+    card_view:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/txtPlayerNameNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Player Name (#Number)"
+            android:textStyle="bold"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/txtDisposals"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Disposals: 0"/>
+
+        <TextView
+            android:id="@+id/txtMarks"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Marks: 0"/>
+
+        <TextView
+            android:id="@+id/txtTackles"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tackles: 0"/>
+
+        <TextView
+            android:id="@+id/txtScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Score: 0.0 (0)"/>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
