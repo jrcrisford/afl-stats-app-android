@@ -81,10 +81,10 @@ class PlayerComparisonActivity : AppCompatActivity() {
     private fun statHighlighting(view1: TextView, view2: TextView, stat1: Int, stat2: Int) =
         if (stat1 > stat2) {
             view1.setTextColor(Color.GREEN)
-            view2.setTextColor(Color.BLACK)
+            view2.setTextColor(Color.WHITE)
         } else if (stat2 > stat1) {
             view2.setTextColor(Color.GREEN)
-            view1.setTextColor(Color.BLACK)
+            view1.setTextColor(Color.WHITE)
         } else {
             view1.setTextColor(Color.BLUE)
             view2.setTextColor(Color.BLUE)

@@ -17,7 +17,6 @@ class PlayerStatsActivity : AppCompatActivity() {
     private lateinit var teamAdapter: ArrayAdapter<String>
     private var teamOptions = mutableListOf<String>()
     private var allPlayers = mutableListOf<Player>()
-    private var selectedPlayers = mutableListOf<Player>()
     private var selectedTeam: String = "Both"
     private var selectedMatch: String? = null
     private val matchList = mutableListOf<String>()
@@ -31,7 +30,10 @@ class PlayerStatsActivity : AppCompatActivity() {
 
         Log.d("NAVIGATION", "Navigated to PlayerStatsActivity")
 
+        // Initialise Firebase Firestore
         db = FirebaseFirestore.getInstance()
+
+        // Set up RecyclerView
         ui.playerStatsRecyclerView.layoutManager = LinearLayoutManager(this)
 
         // Set up match selection spinner
@@ -47,6 +49,7 @@ class PlayerStatsActivity : AppCompatActivity() {
                 id: Long
             ) {
                 selectedMatch = matchList.getOrNull(position)
+                Log.d("DEBUG", "Selected match: $selectedMatch")
                 if (selectedMatch != null) {
                     loadPlayers()
                 }
@@ -54,10 +57,11 @@ class PlayerStatsActivity : AppCompatActivity() {
 
             override fun onNothingSelected(parent: AdapterView<*>) {
                 selectedMatch = null
+                Log.w("DEBUG", "No match selected")
             }
         }
 
-        // Set up team filter spinner )
+        // Set up team filter spinner
         teamAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, teamOptions)
         teamAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         ui.spinnerTeamFilter.adapter = teamAdapter
@@ -70,25 +74,39 @@ class PlayerStatsActivity : AppCompatActivity() {
                 id: Long
             ) {
                 selectedTeam = parent.getItemAtPosition(position) as String
+                Log.d("DEBUG", "Selected team filter: $selectedTeam")
                 filterTeams()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
                 selectedTeam = "Both"
+                Log.w("DEBUG", "No team filter selected, defaulting to both teams")
                 filterTeams()
             }
         }
 
-        // Return to Main Menu Button
+        // Start PlayerSelectionDialog and send data to PlayerComparisonActivity
         ui.btnComparePlayers.setOnClickListener {
-            val intent = Intent(this, PlayerComparisonActivity::class.java)
-            startActivity(intent)
+            Log.d("DEBUG", "Compare players button clicked")
+            PlayerSelectionDialog(
+                context = this,
+                players = allPlayers
+            ) { player1, player2 ->
+                val intent = Intent(this, PlayerComparisonActivity::class.java)
+                intent.putExtra("player1", player1)
+                intent.putExtra("player2", player2)
+                Log.d("DEBUG", "Starting PlayerComparisonActivity with players: $player1 and $player2")
+                startActivity(intent)
+            }.show()
         }
 
         // Load match list from Firestore
         loadMatchList()
     }
 
+    /**
+     * Load the list of matches from Firestore and populate the spinner.
+     */
     private fun loadMatchList() {
         db.collection("matches")
             .get()
@@ -105,6 +123,9 @@ class PlayerStatsActivity : AppCompatActivity() {
             }
     }
 
+    /**
+     * Load player statistics for the selected match from Firestore.
+     */
     private fun loadPlayers() {
         db.collection("matches")
             .document(selectedMatch!!)
@@ -115,13 +136,16 @@ class PlayerStatsActivity : AppCompatActivity() {
                     val rawPlayerStats = document.get("playerStats") as? Map<String, Any>
                     teamAName = document.getString("teamAName") ?: "Team A"
                     teamBName = document.getString("teamBName") ?: "Team B"
+
+                    // Update team options and refresh team filter spinner
                     teamOptions.clear()
                     teamOptions.add("Both")
                     teamOptions.add(teamAName)
                     teamOptions.add(teamBName)
                     teamAdapter.notifyDataSetChanged()
-                    allPlayers.clear()
 
+                    // Clear previous player data and load new data
+                    allPlayers.clear()
                     rawPlayerStats?.forEach { (playerId, playerData) ->
                         val playerDataMap = playerData as? Map<String, Any>
                         if (playerDataMap != null) {
@@ -152,6 +176,9 @@ class PlayerStatsActivity : AppCompatActivity() {
             }
     }
 
+    /**
+     * Filter the players based on the selected team and update the RecyclerView.
+     */
     private fun filterTeams() {
         val filtered = when (selectedTeam) {
             teamAName -> allPlayers.filter { it.team == teamAName }
@@ -159,6 +186,7 @@ class PlayerStatsActivity : AppCompatActivity() {
             else -> allPlayers
         }
 
+        Log.d("DEBUG", "Filtered players for team $selectedTeam: {$filtered.size} players")
         ui.playerStatsRecyclerView.adapter = PlayerStatsAdapter(filtered)
     }
 }
