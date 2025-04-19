@@ -1,6 +1,7 @@
 package au.edu.utas.jc101.aflstatsapp
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -23,6 +24,8 @@ class PlayerStatsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         ui = ActivityPlayerStatsBinding.inflate(layoutInflater)
         setContentView(ui.root)
+
+        Log.d("NAVIGATION", "Navigated to PlayerStatsActivity")
 
         db = FirebaseFirestore.getInstance()
 

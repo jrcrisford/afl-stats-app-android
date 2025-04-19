@@ -20,6 +20,8 @@ class MainActivity : AppCompatActivity()
 
         ui.lblMainTitle.text = "Welcome to the AFL Stats App"
 
+        Log.d("NAVIGATION", "Navigated to ActivityMain")
+
         val db = Firebase.firestore
         Log.d("FIREBASE", "Firebase connected: ${db.app.name}")
 
@@ -38,8 +40,14 @@ class MainActivity : AppCompatActivity()
             }
 
         ui.btnNewMatch.setOnClickListener {
-            Log.d("BUTTON", "New Match button clicked")
+            Log.d("DEBUG", "New Match button clicked")
             val intent = Intent(this, NewMatchActivity::class.java)
+            startActivity(intent)
+        }
+
+        ui.btnViewStats.setOnClickListener {
+            Log.d("DEBUG", "View Stats button clicked")
+            val intent = Intent(this, PlayerStatsActivity::class.java)
             startActivity(intent)
         }
     }

@@ -23,6 +23,7 @@
         </activity>
         <activity android:name=".NewMatchActivity" />
         <activity android:name=".MatchTrackingActivity" />
+        <activity android:name=".PlayerStatsActivity" />
     </application>
 
 </manifest>
