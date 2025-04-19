@@ -5,11 +5,8 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import au.edu.utas.jc101.aflstatsapp.databinding.ActivityPlayerStatsBinding
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -52,7 +49,6 @@ class PlayerStatsActivity : AppCompatActivity() {
                 if (selectedMatch != null) {
                     loadPlayers()
                 }
-
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
