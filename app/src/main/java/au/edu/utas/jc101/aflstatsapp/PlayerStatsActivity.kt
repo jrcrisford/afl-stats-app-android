@@ -1,5 +1,6 @@
 package au.edu.utas.jc101.aflstatsapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -79,8 +80,9 @@ class PlayerStatsActivity : AppCompatActivity() {
         }
 
         // Return to Main Menu Button
-        ui.btnReturnMainMenu.setOnClickListener {
-            finish()
+        ui.btnComparePlayers.setOnClickListener {
+            val intent = Intent(this, PlayerComparisonActivity::class.java)
+            startActivity(intent)
         }
 
         // Load match list from Firestore
