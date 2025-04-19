@@ -16,12 +16,15 @@ import com.google.firebase.firestore.FirebaseFirestore
 class PlayerStatsActivity : AppCompatActivity() {
     private lateinit var ui: ActivityPlayerStatsBinding
     private lateinit var db: FirebaseFirestore
-
+    private lateinit var teamAdapter: ArrayAdapter<String>
+    private var teamOptions = mutableListOf<String>()
     private var allPlayers = mutableListOf<Player>()
     private var selectedPlayers = mutableListOf<Player>()
     private var selectedTeam: String = "Both"
     private var selectedMatch: String? = null
     private val matchList = mutableListOf<String>()
+    private var teamAName: String = "Team A"
+    private var teamBName: String = "Team B"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,9 +60,8 @@ class PlayerStatsActivity : AppCompatActivity() {
             }
         }
 
-        // Set up team filter spinner
-        val teamOptions = listOf("Both", "Team A", "Team B")
-        val teamAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, teamOptions)
+        // Set up team filter spinner )
+        teamAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, teamOptions)
         teamAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         ui.spinnerTeamFilter.adapter = teamAdapter
 
@@ -109,9 +111,17 @@ class PlayerStatsActivity : AppCompatActivity() {
         db.collection("matches")
             .document(selectedMatch!!)
             .get()
+
             .addOnSuccessListener { document ->
                 if (document.exists()) {
                     val rawPlayerStats = document.get("playerStats") as? Map<String, Any>
+                    teamAName = document.getString("teamAName") ?: "Team A"
+                    teamBName = document.getString("teamBName") ?: "Team B"
+                    teamOptions.clear()
+                    teamOptions.add("Both")
+                    teamOptions.add(teamAName)
+                    teamOptions.add(teamBName)
+                    teamAdapter.notifyDataSetChanged()
                     allPlayers.clear()
 
                     rawPlayerStats?.forEach { (playerId, playerData) ->
@@ -146,8 +156,8 @@ class PlayerStatsActivity : AppCompatActivity() {
 
     private fun filterTeams() {
         val filtered = when (selectedTeam) {
-            "Team A" -> allPlayers.filter { it.team == "Team A" }
-            "Team B" -> allPlayers.filter { it.team == "Team B" }
+            teamAName -> allPlayers.filter { it.team == teamAName }
+            teamBName -> allPlayers.filter { it.team == teamBName }
             else -> allPlayers
         }
 
