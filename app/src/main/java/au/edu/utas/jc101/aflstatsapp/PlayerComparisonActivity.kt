@@ -71,6 +71,11 @@ class PlayerComparisonActivity : AppCompatActivity() {
         ui.txtPlayer2Tackles.text = player2.tackles.toString()
         ui.txtPlayer1Score.text = "${player1.goals}.${player1.behinds} ($totalScore1)"
         ui.txtPlayer2Score.text = "${player2.goals}.${player2.behinds} ($totalScore2)"
+
+        statHighlighting(ui.txtPlayer1Disposals, ui.txtPlayer2Disposals, disposals1, disposals2)
+        statHighlighting(ui.txtPlayer1Marks, ui.txtPlayer2Marks, player1.marks, player2.marks)
+        statHighlighting(ui.txtPlayer1Tackles, ui.txtPlayer2Tackles, player1.tackles, player2.tackles)
+        statHighlighting(ui.txtPlayer1Score, ui.txtPlayer2Score, totalScore1, totalScore2)
     }
 
     private fun statHighlighting(view1: TextView, view2: TextView, stat1: Int, stat2: Int) =
