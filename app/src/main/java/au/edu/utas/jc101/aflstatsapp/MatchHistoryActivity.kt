@@ -115,7 +115,7 @@ class MatchHistoryActivity : AppCompatActivity() {
 
                     updateTeamStats(scoreData)
                     updatePlayerStats()
-                    //updateActionList()
+                    updateActionList()
                 } else {
                     Log.w("FIRESTORE", "No such match document")
                 }
@@ -125,7 +125,32 @@ class MatchHistoryActivity : AppCompatActivity() {
             }
     }
 
+    /**
+     * Highlights the better team's stat in green and the other team's stat in white.
+     * If both stats are equal, both are highlighted in blue.
+     */
+    private fun statHighlighting(view1: TextView, view2: TextView, stat1: Int, stat2: Int) =
+        if (stat1 > stat2) {
+            view1.setTextColor(Color.GREEN)
+            view2.setTextColor(Color.WHITE)
+        } else if (stat2 > stat1) {
+            view2.setTextColor(Color.GREEN)
+            view1.setTextColor(Color.WHITE)
+        } else {
+            view1.setTextColor(Color.BLUE)
+            view2.setTextColor(Color.BLUE)
+        }
 
+    /**
+     * Formats the score for display, converting goals and behinds into a string
+     * in the Goals.Behinds (Total) format.
+     */
+    private fun formatScore(players: List<Player>): String {
+        val goals = players.sumOf { it.goals }
+        val behinds = players.sumOf { it.behinds }
+        val total = goals * 6 + behinds
+        return "$goals.$behinds ($total)"
+    }
 
     private fun updateTeamStats(scoreData: Map<String, Any>?) {
         // Load Goals and Behinds
@@ -173,31 +198,43 @@ class MatchHistoryActivity : AppCompatActivity() {
         ui.playerStatsRecyclerView.adapter = PlayerStatsAdapter(allPlayers)
     }
 
-    /**
-     * Highlights the better team's stat in green and the other team's stat in white.
-     * If both stats are equal, both are highlighted in blue.
-     */
-    private fun statHighlighting(view1: TextView, view2: TextView, stat1: Int, stat2: Int) =
-        if (stat1 > stat2) {
-            view1.setTextColor(Color.GREEN)
-            view2.setTextColor(Color.WHITE)
-        } else if (stat2 > stat1) {
-            view2.setTextColor(Color.GREEN)
-            view1.setTextColor(Color.WHITE)
-        } else {
-            view1.setTextColor(Color.BLUE)
-            view2.setTextColor(Color.BLUE)
+    private fun updateActionList() {
+        val actionTexts = mutableListOf<String>()
+
+        // Loop through all players and their action timestamps
+        for (player in allPlayers) {
+            // Loop through each player's actions
+            for (action in player.actionTimestamps) {
+                val actionType = action["actionType"] ?: "Unknown action"
+                val timestamp = action["timestamp"] ?: "Unknown timestamp"
+                actionTexts.add("${player.name} #${player.number}: $actionType at $timestamp")
+            }
         }
 
-    /**
-     * Formats the score for display, converting goals and behinds into a string
-     * in the Goals.Behinds (Total) format.
-     */
-    private fun formatScore(players: List<Player>): String {
-        val goals = players.sumOf { it.goals }
-        val behinds = players.sumOf { it.behinds }
-        val total = goals * 6 + behinds
-        return "$goals.$behinds ($total)"
+        // Sort through the actions chronologically by timestamp
+        actionTexts.sort()
+
+        Log.d("DEBUG", "Action texts: $actionTexts")
+
+        val adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_list_item_1,
+            actionTexts
+        )
+        ui.actionsListView.adapter = adapter
+
+        // Expand the ListView to show all items (COPILOT)
+        val density = resources.displayMetrics.density
+        val itemHeightDp = 80 // you can tweak this if you want
+        val itemHeightPx = (itemHeightDp * density).toInt()
+        val totalHeight = itemHeightPx * adapter.count
+
+        val params = ui.actionsListView.layoutParams
+        params.height = totalHeight
+        ui.actionsListView.layoutParams = params
+
+        ui.actionsListView.requestLayout()
+
     }
 
 
