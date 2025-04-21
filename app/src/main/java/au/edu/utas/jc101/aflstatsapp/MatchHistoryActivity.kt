@@ -56,6 +56,21 @@ class MatchHistoryActivity : AppCompatActivity() {
                 }
             }
 
+        var actionsCollapsed = true
+        ui.actionsListView.visibility = View.GONE
+        ui.btnToggleActions.text = "Show Actions"
+
+        ui.btnToggleActions.setOnClickListener {
+            if (!actionsCollapsed) {
+                ui.actionsListView.visibility = View.GONE
+                ui.btnToggleActions.text = "Show Actions"
+            } else {
+                ui.actionsListView.visibility = View.VISIBLE
+                ui.btnToggleActions.text = "Hide Actions"
+            }
+            actionsCollapsed = !actionsCollapsed
+        }
+
         loadMatchList()
     }
 
