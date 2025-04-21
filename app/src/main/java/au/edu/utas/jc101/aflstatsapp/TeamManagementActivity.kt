@@ -3,9 +3,12 @@ package au.edu.utas.jc101.aflstatsapp
 import android.R
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import au.edu.utas.jc101.aflstatsapp.databinding.ActivityTeamManagementBinding
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -15,7 +18,7 @@ class TeamManagementActivity : AppCompatActivity() {
 
     private val teams = mutableListOf<Team>()
     private var playerList = mutableListOf<Player>()
-    //private lateinit var playerAdapter: PlayerAdapter
+    private lateinit var playerAdapter: PlayerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +29,9 @@ class TeamManagementActivity : AppCompatActivity() {
 
         db = FirebaseFirestore.getInstance()
 
-        // TODO Set up RecyclerView for players
+        // Set up RecyclerView for players
+        ui.recyclerPlayers.layoutManager = LinearLayoutManager(this)
+        ui.recyclerPlayers.adapter = PlayerAdapter(playerList)
 
         loadTeams()
 
@@ -38,6 +43,11 @@ class TeamManagementActivity : AppCompatActivity() {
         // SaveTeam
         ui.btnSaveTeam.setOnClickListener {
             saveTeam()
+        }
+
+        val DebugMode = true
+        if (DebugMode) {
+            addDebugTeam()
         }
     }
 
@@ -75,10 +85,43 @@ class TeamManagementActivity : AppCompatActivity() {
         ui.spinnerSelectTeam.adapter = adapter
 
         Log.d("DEBUG", "Team spinner updated with teams: $teamNames")
+
+        ui.spinnerSelectTeam.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View,
+                position: Int,
+                id: Long
+            ) {
+                val selectedName = parent.getItemAtPosition(position).toString()
+                Log.d("DEBUG", "Selected team: $selectedName")
+
+                if (selectedName == "New Team") {
+                    ui.edtTeamName.setText("")
+                    playerList.clear()
+                    ui.recyclerPlayers.adapter?.notifyDataSetChanged()
+                } else {
+                    val selectedTeam = teams.find { it.name == selectedName }
+                    if (selectedTeam != null) {
+                        loadTeamData(selectedTeam)
+                    }
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // Do nothing
+            }
+        })
+
     }
 
-    private fun loadTeamData() {
-        // TODO Loads the selected team data into the UI
+    private fun loadTeamData(selectedTeam: Team) {
+        ui.edtTeamName.setText(selectedTeam.name)
+
+        playerList.clear()
+        playerList.addAll(selectedTeam.players)
+
+        ui.recyclerPlayers.adapter?.notifyDataSetChanged()
     }
 
     private fun editPlayer() {
@@ -118,6 +161,47 @@ class TeamManagementActivity : AppCompatActivity() {
             }
             .addOnFailureListener() { exception ->
                 Log.e("FIREBASE", "Failed to save team: ", exception)
+            }
+    }
+
+    //COPILOT
+    private fun addDebugTeam() {
+        val debugPlayers = mutableListOf<Player>()
+        for (i in 1..8) {
+            debugPlayers.add(
+                Player(
+                    id = "debug_player_$i",
+                    name = "Debug Player $i",
+                    number = i,
+                    team = "DebugTeam"
+                )
+            )
+        }
+
+        val debugTeam = Team(name = "DebugTeam", players = debugPlayers)
+
+        // Save to Firestore
+        val teamData = hashMapOf(
+            "name" to debugTeam.name,
+            "players" to debugTeam.players.map { player ->
+                hashMapOf(
+                    "id" to player.id,
+                    "name" to player.name,
+                    "number" to player.number
+                )
+            }
+        )
+
+        db.collection("teams")
+            .document(debugTeam.name)
+            .set(teamData)
+            .addOnSuccessListener {
+                Log.d("DEBUG", "Debug team uploaded successfully to Firestore")
+                // Only update UI after successful upload
+                loadTeams()
+            }
+            .addOnFailureListener { exception ->
+                Log.e("FIREBASE", "Failed to upload debug team: ", exception)
             }
     }
 }
