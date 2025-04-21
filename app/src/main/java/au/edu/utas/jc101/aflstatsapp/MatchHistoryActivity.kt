@@ -1,11 +1,13 @@
 package au.edu.utas.jc101.aflstatsapp
 
 import android.R
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import au.edu.utas.jc101.aflstatsapp.databinding.ActivityMatchHistoryBinding
 import com.google.firebase.firestore.FirebaseFirestore
@@ -111,8 +113,10 @@ class MatchHistoryActivity : AppCompatActivity() {
 
                     Log.d("DEBUG", "Loaded ${allPlayers.size} players for match $matchId")
 
-                    //updateTeamStats(scoreData)
+                    updateTeamStats(scoreData)
                     //updatePlayerStats()
+                    ui.playerStatsRecyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+                    ui.playerStatsRecyclerView.adapter = PlayerStatsAdapter(allPlayers)
                     //updateActionList()
                 } else {
                     Log.w("FIRESTORE", "No such match document")
@@ -121,6 +125,74 @@ class MatchHistoryActivity : AppCompatActivity() {
             .addOnFailureListener() { exception ->
                 Log.e("FIRESTORE", "Error loading match details: ", exception)
             }
+    }
+
+    private fun updateTeamStats(scoreData: Map<String, Any>?) {
+        // Load Goals and Behinds
+        val teamAGoals =
+            ((scoreData?.get("teamA") as? Map<*, *>)?.get("goals") as? Long)?.toInt() ?: 0
+        val teamABehinds =
+            ((scoreData?.get("teamA") as? Map<*, *>)?.get("behinds") as? Long)?.toInt() ?: 0
+        val teamBGoals =
+            ((scoreData?.get("teamB") as? Map<*, *>)?.get("goals") as? Long)?.toInt() ?: 0
+        val teamBBehinds =
+            ((scoreData?.get("teamB") as? Map<*, *>)?.get("behinds") as? Long)?.toInt() ?: 0
+
+        val teamATotal = teamBGoals * 6 + teamABehinds
+        val teamBTotal = teamBGoals * 6 + teamBBehinds
+
+        ui.txtFinalScoreSummary.text =
+            "$teamAName $teamAGoals.$teamABehinds ($teamATotal) vs $teamBName $teamBGoals.$teamBBehinds ($teamBTotal)"
+
+        val disposalsA =
+            allPlayers.filter { it.team == teamAName }.sumOf { it.kicks + it.handballs }
+        val disposalsB =
+            allPlayers.filter { it.team == teamBName }.sumOf { it.kicks + it.handballs }
+        val marksA = allPlayers.filter { it.team == teamAName }.sumOf { it.marks }
+        val marksB = allPlayers.filter { it.team == teamBName }.sumOf { it.marks }
+        val tacklesA = allPlayers.filter { it.team == teamAName }.sumOf { it.tackles }
+        val tacklesB = allPlayers.filter { it.team == teamBName }.sumOf { it.tackles }
+
+        ui.txtTeamADisposals.text = disposalsA.toString()
+        ui.txtTeamBDisposals.text = disposalsB.toString()
+        ui.txtTeamAMarks.text = marksA.toString()
+        ui.txtTeamBMarks.text = marksB.toString()
+        ui.txtTeamATackles.text = tacklesA.toString()
+        ui.txtTeamBTackles.text = tacklesB.toString()
+        ui.txtTeamAScore.text = formatScore(allPlayers.filter { it.team == teamAName })
+        ui.txtTeamBScore.text = formatScore(allPlayers.filter { it.team == teamBName })
+
+        statHighlighting(ui.txtTeamADisposals, ui.txtTeamBDisposals, disposalsA, disposalsB)
+        statHighlighting(ui.txtTeamAMarks, ui.txtTeamBMarks, marksA, marksB)
+        statHighlighting(ui.txtTeamATackles, ui.txtTeamBTackles, tacklesA, tacklesB)
+        statHighlighting(ui.txtTeamAScore, ui.txtTeamBScore, teamATotal, teamBTotal)
+    }
+
+    /**
+     * Highlights the better team's stat in green and the other team's stat in white.
+     * If both stats are equal, both are highlighted in blue.
+     */
+    private fun statHighlighting(view1: TextView, view2: TextView, stat1: Int, stat2: Int) =
+        if (stat1 > stat2) {
+            view1.setTextColor(Color.GREEN)
+            view2.setTextColor(Color.WHITE)
+        } else if (stat2 > stat1) {
+            view2.setTextColor(Color.GREEN)
+            view1.setTextColor(Color.WHITE)
+        } else {
+            view1.setTextColor(Color.BLUE)
+            view2.setTextColor(Color.BLUE)
+        }
+
+    /**
+     * Formats the score for display, converting goals and behinds into a string
+     * in the Goals.Behinds (Total) format.
+     */
+    private fun formatScore(players: List<Player>): String {
+        val goals = players.sumOf { it.goals }
+        val behinds = players.sumOf { it.behinds }
+        val total = goals * 6 + behinds
+        return "$goals.$behinds ($total)"
     }
 
 
