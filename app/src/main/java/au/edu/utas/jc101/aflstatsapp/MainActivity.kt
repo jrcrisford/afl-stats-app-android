@@ -50,6 +50,12 @@ class MainActivity : AppCompatActivity()
             val intent = Intent(this, PlayerStatsActivity::class.java)
             startActivity(intent)
         }
+
+        ui.btnViewMatchHistory.setOnClickListener {
+            Log.d("DEBUG", "View Match History button clicked")
+            val intent = Intent(this, MatchHistoryActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
 
