@@ -30,14 +30,22 @@ class TeamManagementActivity : AppCompatActivity() {
         db = FirebaseFirestore.getInstance()
 
         // Set up RecyclerView for players
+        playerAdapter = PlayerAdapter(playerList)
         ui.recyclerPlayers.layoutManager = LinearLayoutManager(this)
-        ui.recyclerPlayers.adapter = PlayerAdapter(playerList)
+        ui.recyclerPlayers.adapter = playerAdapter
 
         loadTeams()
 
         // Create new player
         ui.btnAddPlayer.setOnClickListener {
-            // TODO PlayerEditDialog()
+            PlayerAddEditDialog(
+                context = this,
+                player = null,
+                onPlayerSaved = { newPlayer ->
+                    playerList.add(newPlayer)
+                    playerAdapter.notifyDataSetChanged()
+                }
+            ).show()
         }
 
         // SaveTeam
@@ -101,7 +109,7 @@ class TeamManagementActivity : AppCompatActivity() {
                 if (selectedName == "New Team") {
                     ui.edtTeamName.setText("")
                     playerList.clear()
-                    ui.recyclerPlayers.adapter?.notifyDataSetChanged()
+                    playerAdapter.notifyDataSetChanged()
                 } else {
                     val selectedTeam = teams.find { it.name == selectedName }
                     if (selectedTeam != null) {
@@ -123,7 +131,7 @@ class TeamManagementActivity : AppCompatActivity() {
         playerList.clear()
         playerList.addAll(selectedTeam.players)
 
-        ui.recyclerPlayers.adapter?.notifyDataSetChanged()
+        playerAdapter.notifyDataSetChanged()
     }
 
     private fun editPlayer() {
