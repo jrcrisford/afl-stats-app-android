@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/txtMatchHistoryTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Match History"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Match Selection Spinner -->
+        <Spinner
+            android:id="@+id/spinnerMatchSelection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Final Score Summary -->
+        <TextView
+            android:id="@+id/txtFinalScoreSummary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Final Score: Team A 5.4 (34) vs Team B 4.5 (29)"
+            android:textSize="18sp"
+            android:layout_marginBottom="16dp"
+            android:layout_gravity="center_horizontal" />
+
+        <!-- Team Stats Comparison Table -->
+        <LinearLayout
+            android:id="@+id/layoutTeamStats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp" >
+
+            <!-- Team Stats Title -->
+            <TextView
+                android:id="@+id/txtTeamStatsTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Team Stats"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"
+                android:gravity="center" />
+
+            <!-- Stat Rows (one each stat) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3"
+                android:layout_marginBottom="4dp">
+
+                <TextView
+                    android:id="@+id/txtStatLabelDisposals"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Disposals:"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtTeamADisposals"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0" />
+
+                <TextView
+                    android:id="@+id/txtTeamBDisposals"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0" />
+            </LinearLayout>
+
+            <!-- Marks Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3"
+                android:layout_marginBottom="4dp">
+
+                <TextView
+                    android:id="@+id/txtStatLabelMarks"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Marks:"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtTeamAMarks"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0" />
+
+                <TextView
+                    android:id="@+id/txtTeamBMarks"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0" />
+            </LinearLayout>
+
+            <!-- Tackles Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3"
+                android:layout_marginBottom="4dp">
+
+                <TextView
+                    android:id="@+id/txtStatLabelTackles"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Tackles:"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtTeamATackles"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0" />
+
+                <TextView
+                    android:id="@+id/txtTeamBTackles"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0" />
+            </LinearLayout>
+
+            <!-- Score row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:id="@+id/txtStatLabelScore"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Score:"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtTeamAScore"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0" />
+
+                <TextView
+                    android:id="@+id/txtTeamBScore"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Player Stats Section -->
+        <TextView
+            android:id="@+id/txtPlayerStatsTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Player Stats"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/playerStatsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp" />
+
+        <!-- Actions List -->
+        <TextView
+            android:id="@+id/txtActionsTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Recorded Actions"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/actionsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp" />
+
+    </LinearLayout>
+
+</ScrollView>
