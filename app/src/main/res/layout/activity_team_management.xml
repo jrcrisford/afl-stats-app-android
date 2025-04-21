@@ -54,6 +54,12 @@
             android:textStyle="bold"
             android:layout_marginBottom="8dp"/>
 
+        <Spinner
+            android:id="@+id/spinnerSortPlayers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp" />
+
         <!-- Player List -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerPlayers"

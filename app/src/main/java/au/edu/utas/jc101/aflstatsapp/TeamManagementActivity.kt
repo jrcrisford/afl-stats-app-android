@@ -37,6 +37,46 @@ class TeamManagementActivity : AppCompatActivity() {
         ui.recyclerPlayers.layoutManager = LinearLayoutManager(this)
         ui.recyclerPlayers.adapter = playerAdapter
 
+        val sortOptions = listOf("Name A-Z", "Name Z-A", "Jersy Number")
+        val sortAdapter = ArrayAdapter(this, R.layout.simple_spinner_item, sortOptions)
+        sortAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+        ui.spinnerSortPlayers.adapter = sortAdapter
+
+        ui.spinnerSortPlayers.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                when (position) {
+                    0 -> {
+                        playerList.sortBy { it.name }
+                        playerAdapter.notifyDataSetChanged()
+                        Log.d("DEBUG", "Sorted players A-Z")
+                    }
+                    1 -> {
+                        playerList.sortByDescending { it.name }
+                        playerAdapter.notifyDataSetChanged()
+                        Log.d("DEBUG", "Sorted players Z-A")
+                    }
+                    2 -> {
+                        playerList.sortBy { it.number }
+                        playerAdapter.notifyDataSetChanged()
+                        Log.d("DEBUG", "Sorted players by jersey number")
+                    }
+                    else -> {
+                        Log.w("DEBUG", "Unknown sort option selected")
+                    }
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // Do nothing
+            }
+        }
+
+
         loadTeams()
 
         // Create new player
