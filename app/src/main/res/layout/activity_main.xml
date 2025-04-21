@@ -34,4 +34,11 @@
         android:text="View Match History"
         android:layout_marginTop="16dp"/>
 
+    <Button
+        android:id="@+id/btnTeamManagement"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Manage Teams"
+        android:layout_marginTop="16dp"/>
+
 </LinearLayout>

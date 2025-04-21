@@ -56,6 +56,12 @@ class MainActivity : AppCompatActivity()
             val intent = Intent(this, MatchHistoryActivity::class.java)
             startActivity(intent)
         }
+
+        ui.btnTeamManagement.setOnClickListener {
+            Log.d("DEBUG", "Team Management button clicked")
+            val intent = Intent(this, TeamManagementActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
 
