@@ -1,6 +1,7 @@
 package au.edu.utas.jc101.aflstatsapp
 
 import android.R
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -57,6 +58,24 @@ class MatchHistoryActivity : AppCompatActivity() {
             }
 
         loadMatchList()
+
+        ui.btnComparePlayers.setOnClickListener {
+            if (allPlayers.isNotEmpty()) {
+                PlayerSelectionDialog(
+                    context = this,
+                    players = allPlayers
+                ) { player1, player2 ->
+                    val intent = Intent(this, PlayerComparisonActivity::class.java)
+                    intent.putExtra("player1", player1)
+                    intent.putExtra("player2", player2)
+                    Log.d(
+                        "DEBUG",
+                        "Starting PlayerComparisonActivity with players: $player1 and $player2"
+                    )
+                    startActivity(intent)
+                }.show()
+            }
+        }
 
         var actionsCollapsed = true
         ui.actionsListView.visibility = View.GONE
@@ -214,20 +233,21 @@ class MatchHistoryActivity : AppCompatActivity() {
     }
 
     private fun updateActionList() {
-        val actionTexts = mutableListOf<String>()
+        val actionPairs = mutableListOf<Pair<String, String>>()
 
         // Loop through all players and their action timestamps
         for (player in allPlayers) {
             // Loop through each player's actions
             for (action in player.actionTimestamps) {
                 val actionType = action["action"] ?: "Unknown action"
-                val timestamp = action["timestamp"] ?: "Unknown timestamp"
-                actionTexts.add("${player.name} #${player.number}: $actionType at $timestamp")
+                val timestamp = action["timestamp"] as? String ?: "Unknown timestamp"
+                val text = "${player.name} #${player.number}: $actionType at $timestamp"
+                actionPairs.add(Pair(timestamp, text))
             }
         }
 
-        // Sort through the actions chronologically by timestamp
-        actionTexts.sort()
+        val sortedActions = actionPairs.sortedBy { it.first }
+        val actionTexts = sortedActions.map { it.second }
 
         Log.d("DEBUG", "Action texts: $actionTexts")
 

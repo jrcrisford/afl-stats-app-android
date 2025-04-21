@@ -198,6 +198,13 @@
             android:layout_height="wrap_content"
             android:paddingTop="8dp" />
 
+        <Button
+            android:id="@+id/btnComparePlayers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Compare Players"
+            android:layout_marginTop="16dp" />
+
         <!-- Actions List -->
         <TextView
             android:id="@+id/txtActionsTitle"
