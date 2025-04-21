@@ -114,9 +114,7 @@ class MatchHistoryActivity : AppCompatActivity() {
                     Log.d("DEBUG", "Loaded ${allPlayers.size} players for match $matchId")
 
                     updateTeamStats(scoreData)
-                    //updatePlayerStats()
-                    ui.playerStatsRecyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
-                    ui.playerStatsRecyclerView.adapter = PlayerStatsAdapter(allPlayers)
+                    updatePlayerStats()
                     //updateActionList()
                 } else {
                     Log.w("FIRESTORE", "No such match document")
@@ -126,6 +124,8 @@ class MatchHistoryActivity : AppCompatActivity() {
                 Log.e("FIRESTORE", "Error loading match details: ", exception)
             }
     }
+
+
 
     private fun updateTeamStats(scoreData: Map<String, Any>?) {
         // Load Goals and Behinds
@@ -166,6 +166,11 @@ class MatchHistoryActivity : AppCompatActivity() {
         statHighlighting(ui.txtTeamAMarks, ui.txtTeamBMarks, marksA, marksB)
         statHighlighting(ui.txtTeamATackles, ui.txtTeamBTackles, tacklesA, tacklesB)
         statHighlighting(ui.txtTeamAScore, ui.txtTeamBScore, teamATotal, teamBTotal)
+    }
+
+    private fun updatePlayerStats() {
+        ui.playerStatsRecyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        ui.playerStatsRecyclerView.adapter = PlayerStatsAdapter(allPlayers)
     }
 
     /**
