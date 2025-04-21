@@ -1,7 +1,10 @@
 package au.edu.utas.jc101.aflstatsapp
 
+import android.R
 import android.os.Bundle
 import android.util.Log
+import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import au.edu.utas.jc101.aflstatsapp.databinding.ActivityTeamManagementBinding
 import com.google.firebase.firestore.FirebaseFirestore
@@ -64,7 +67,14 @@ class TeamManagementActivity : AppCompatActivity() {
     }
 
     private fun updateTeamSpinner() {
-        //TODO Update the spinner with the loaded teams
+        val teamNames = mutableListOf<String>("New Team")
+        teamNames.addAll(teams.map { it.name })
+
+        val adapter = ArrayAdapter(this, R.layout.simple_spinner_item, teamNames)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        ui.spinnerSelectTeam.adapter = adapter
+
+        Log.d("DEBUG", "Team spinner updated with teams: $teamNames")
     }
 
     private fun loadTeamData() {
@@ -82,8 +92,9 @@ class TeamManagementActivity : AppCompatActivity() {
             Log.w("DEBUG", "Team name is empty")
             return
         }
-        if (playerList.isEmpty()) {
-            Log.w("DEBUG", "No players in the team")
+        if (playerList.size < 2) {
+            Log.w("DEBUG", "Team cannot be saved with less than 2 players")
+            Toast.makeText(this, "Team must have at least 2 players", Toast.LENGTH_SHORT).show()
             return
         }
 
