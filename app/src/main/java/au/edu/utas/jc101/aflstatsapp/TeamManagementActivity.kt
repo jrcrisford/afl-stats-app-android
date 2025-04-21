@@ -19,6 +19,7 @@ class TeamManagementActivity : AppCompatActivity() {
     private val teams = mutableListOf<Team>()
     private var playerList = mutableListOf<Player>()
     private lateinit var playerAdapter: PlayerAdapter
+    private var originalTeamName: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -134,6 +135,7 @@ class TeamManagementActivity : AppCompatActivity() {
         playerList.addAll(selectedTeam.players)
 
         playerAdapter.notifyDataSetChanged()
+        originalTeamName = selectedTeam.name
     }
 
     private fun editPlayer(player: Player) {
@@ -174,12 +176,22 @@ class TeamManagementActivity : AppCompatActivity() {
             }
         )
 
-        db.collection("teams")
-            .document(teamName)
-            .set(teamData)
+        val batch = db.batch()
+
+        if (originalTeamName != null && originalTeamName != teamName) {
+            val oldDocument = db.collection("teams").document(originalTeamName!!)
+            batch.delete(oldDocument)
+            Log.d("DEBUG", "Deleted old team document: $originalTeamName")
+        }
+
+        val newDocument = db.collection("teams").document(teamName)
+        batch.set(newDocument, teamData)
+
+        batch.commit()
             .addOnSuccessListener {
                 Log.d("DEBUG", "Team $teamName saved successfully")
                 loadTeams()
+                originalTeamName = teamName
             }
             .addOnFailureListener() { exception ->
                 Log.e("FIREBASE", "Failed to save team: ", exception)
