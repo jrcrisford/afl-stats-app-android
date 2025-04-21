@@ -10,7 +10,7 @@ class TeamManagementActivity : AppCompatActivity() {
     private lateinit var ui: ActivityTeamManagementBinding
     private lateinit var db: FirebaseFirestore
 
-    //private val teams = mutableListOf<Team>()
+    private val teams = mutableListOf<Team>()
     private var playerList = mutableListOf<Player>()
     //private lateinit var playerAdapter: PlayerAdapter
 
@@ -54,7 +54,7 @@ class TeamManagementActivity : AppCompatActivity() {
                         )
                     }.toMutableList()
 
-                    //team.add(Team(name = teamName, players = players))
+                    teams.add(Team(name = teamName, players = players))
                 }
                 updateTeamSpinner()
             }
