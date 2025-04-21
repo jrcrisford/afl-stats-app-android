@@ -56,6 +56,8 @@ class MatchHistoryActivity : AppCompatActivity() {
                 }
             }
 
+        loadMatchList()
+
         var actionsCollapsed = true
         ui.actionsListView.visibility = View.GONE
         ui.btnToggleActions.text = "Show Actions"
@@ -70,8 +72,6 @@ class MatchHistoryActivity : AppCompatActivity() {
             }
             actionsCollapsed = !actionsCollapsed
         }
-
-        loadMatchList()
     }
 
     private fun loadMatchList() {
@@ -220,7 +220,7 @@ class MatchHistoryActivity : AppCompatActivity() {
         for (player in allPlayers) {
             // Loop through each player's actions
             for (action in player.actionTimestamps) {
-                val actionType = action["actionType"] ?: "Unknown action"
+                val actionType = action["action"] ?: "Unknown action"
                 val timestamp = action["timestamp"] ?: "Unknown timestamp"
                 actionTexts.add("${player.name} #${player.number}: $actionType at $timestamp")
             }
@@ -249,11 +249,5 @@ class MatchHistoryActivity : AppCompatActivity() {
         ui.actionsListView.layoutParams = params
 
         ui.actionsListView.requestLayout()
-
     }
-
-
-
-
-
 }
