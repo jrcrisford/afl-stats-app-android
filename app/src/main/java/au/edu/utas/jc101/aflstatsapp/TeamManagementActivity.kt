@@ -55,6 +55,8 @@ class TeamManagementActivity : AppCompatActivity() {
         db.collection("teams")
             .get()
             .addOnSuccessListener { documents ->
+                teams.clear()
+
                 for (document in documents) {
                     val teamName = document.getString("name") ?: continue
                     val playersData = document.get("players") as? List<Map<String, Any>> ?: listOf()
