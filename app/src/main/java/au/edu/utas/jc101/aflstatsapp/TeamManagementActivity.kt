@@ -49,26 +49,8 @@ class TeamManagementActivity : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
-                when (position) {
-                    0 -> {
-                        playerList.sortBy { it.name }
-                        playerAdapter.notifyDataSetChanged()
-                        Log.d("DEBUG", "Sorted players A-Z")
-                    }
-                    1 -> {
-                        playerList.sortByDescending { it.name }
-                        playerAdapter.notifyDataSetChanged()
-                        Log.d("DEBUG", "Sorted players Z-A")
-                    }
-                    2 -> {
-                        playerList.sortBy { it.number }
-                        playerAdapter.notifyDataSetChanged()
-                        Log.d("DEBUG", "Sorted players by jersey number")
-                    }
-                    else -> {
-                        Log.w("DEBUG", "Unknown sort option selected")
-                    }
-                }
+                Log.d("DEBUG", "Sort option selected: ${sortOptions[position]}")
+                sortPlayerList()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -86,7 +68,7 @@ class TeamManagementActivity : AppCompatActivity() {
                 player = null,
                 onPlayerSaved = { newPlayer ->
                     playerList.add(newPlayer)
-                    playerAdapter.notifyDataSetChanged()
+                    sortPlayerList()
                 }
             ).show()
         }
@@ -186,10 +168,34 @@ class TeamManagementActivity : AppCompatActivity() {
                 val index = playerList.indexOfFirst { it.id == updatedPlayer.id }
                 if (index != -1) {
                     playerList[index] = updatedPlayer
-                    playerAdapter.notifyDataSetChanged()
+                    sortPlayerList()
                 }
             }
         ).show()
+    }
+
+    private fun sortPlayerList() {
+        when (ui.spinnerSortPlayers.selectedItemPosition) {
+            0 -> {
+                playerList.sortBy { it.name }
+                playerAdapter.notifyDataSetChanged()
+                Log.d("DEBUG", "Sorted players A-Z")
+            }
+            1 -> {
+                playerList.sortByDescending { it.name }
+                playerAdapter.notifyDataSetChanged()
+                Log.d("DEBUG", "Sorted players Z-A")
+            }
+            2 -> {
+                playerList.sortBy { it.number }
+                playerAdapter.notifyDataSetChanged()
+                Log.d("DEBUG", "Sorted players by jersey number")
+            }
+            else -> {
+                Log.w("DEBUG", "Unknown sort option selected")
+            }
+        }
+        playerAdapter.notifyDataSetChanged()
     }
 
     private fun saveTeam() {
