@@ -30,7 +30,9 @@ class TeamManagementActivity : AppCompatActivity() {
         db = FirebaseFirestore.getInstance()
 
         // Set up RecyclerView for players
-        playerAdapter = PlayerAdapter(playerList)
+        playerAdapter = PlayerAdapter(playerList) { clickedplayer ->
+            editPlayer(clickedplayer)
+        }
         ui.recyclerPlayers.layoutManager = LinearLayoutManager(this)
         ui.recyclerPlayers.adapter = playerAdapter
 
@@ -134,8 +136,18 @@ class TeamManagementActivity : AppCompatActivity() {
         playerAdapter.notifyDataSetChanged()
     }
 
-    private fun editPlayer() {
-        // TODO Edit player
+    private fun editPlayer(player: Player) {
+        PlayerAddEditDialog(
+            context = this,
+            player = player,
+            onPlayerSaved = { updatedPlayer ->
+                val index = playerList.indexOfFirst { it.id == updatedPlayer.id }
+                if (index != -1) {
+                    playerList[index] = updatedPlayer
+                    playerAdapter.notifyDataSetChanged()
+                }
+            }
+        ).show()
     }
 
     private fun saveTeam() {

@@ -6,7 +6,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class PlayerAdapter(private val players: List<Player>) : RecyclerView.Adapter<PlayerAdapter.PlayerViewHolder>() {
+class PlayerAdapter(
+    private val players: List<Player>,
+    private val onPlayerClicked: (Player) -> Unit) :
+    RecyclerView.Adapter<PlayerAdapter.PlayerViewHolder>() {
 
     class PlayerViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val txtPlayerNameNumber: TextView = view.findViewById(R.id.txtPlayerNameNumber)
@@ -21,6 +24,7 @@ class PlayerAdapter(private val players: List<Player>) : RecyclerView.Adapter<Pl
     override fun onBindViewHolder(holder: PlayerViewHolder, position: Int) {
         val player = players[position]
         holder.txtPlayerNameNumber.text = "${player.name} (#${player.number})"
+        holder.itemView.setOnClickListener {onPlayerClicked(player)}
     }
 
     override fun getItemCount(): Int {
