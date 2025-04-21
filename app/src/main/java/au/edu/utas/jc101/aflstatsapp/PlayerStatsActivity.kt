@@ -100,6 +100,18 @@ class PlayerStatsActivity : AppCompatActivity() {
             }.show()
         }
 
+        // Start TeamComparisonActivity and send data to it
+        ui.btnCompareTeams.setOnClickListener {
+            Log.d("DEBUG", "Compare teams button clicked")
+            val intent = Intent(this, TeamComparisonActivity::class.java)
+            val playerArrayList = ArrayList(allPlayers) as ArrayList<out android.os.Parcelable>
+            intent.putParcelableArrayListExtra("players", playerArrayList)
+            intent.putExtra("teamAName", teamAName)
+            intent.putExtra("teamBName", teamBName)
+            Log.d("DEBUG", "Starting TeamComparisonActivity with players: $allPlayers")
+            startActivity(intent)
+        }
+
         // Load match list from Firestore
         loadMatchList()
     }

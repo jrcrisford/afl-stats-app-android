@@ -25,6 +25,7 @@
         <activity android:name=".MatchTrackingActivity" />
         <activity android:name=".PlayerStatsActivity" />
         <activity android:name=".PlayerComparisonActivity" />
+        <activity android:name=".TeamComparisonActivity" />
     </application>
 
 </manifest>
