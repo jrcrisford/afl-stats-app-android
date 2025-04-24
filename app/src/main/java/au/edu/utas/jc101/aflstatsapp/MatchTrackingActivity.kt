@@ -23,6 +23,8 @@ class MatchTrackingActivity : AppCompatActivity() {
     private var selectedPlayer: Player? = null
     // Store the most recent action
     private var lastAction: String? = "No previous action"
+    // Store the player that made the last kick
+    private var lastKicker: Player? = null
     // Store the match start time
     private var startTime: Long = 0L
     // Score variable for both teams
@@ -198,6 +200,7 @@ class MatchTrackingActivity : AppCompatActivity() {
             "kick" -> {
                 player.kicks++
                 lastAction = "kick"
+                lastKicker = player
                 Log.d("DEBUG", "Kick recorded for player: ${player.name}")
             }
             "handball" -> {
@@ -216,16 +219,24 @@ class MatchTrackingActivity : AppCompatActivity() {
                 Log.d("DEBUG", "Tackle recorded for player: ${player.name}")
             }
             "goal" -> {
-                if (lastAction == "kick") {
-                    player.goals++
-                    lastAction = "goal"
-                    if (player.team == teamAName) teamAGoals++ else if (player.team == teamBName) teamBGoals++
-                    Log.d("DEBUG", "Goal recorded for player: ${player.name}")
-                } else {
+                if (lastAction != "kick") {
                     Log.w("DEBUG", "Goal action not allowed after ${lastAction}")
                     Toast.makeText(
                         this,
                         "Goal action not allowed after ${lastAction}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return
+                }
+
+                if (lastKicker == null || lastKicker?.team != player.team) {
+                    Log.w(
+                        "DEBUG",
+                        "Goal action not allowed: last kicker, ${lastKicker?.name} is not on ${lastKicker?.team} team",
+                    )
+                    Toast.makeText(
+                        this,
+                        "Goal action not allowed: last kicker, ${lastKicker?.name} is not on ${lastKicker?.team} team",
                         Toast.LENGTH_SHORT
                     ).show()
                     return
