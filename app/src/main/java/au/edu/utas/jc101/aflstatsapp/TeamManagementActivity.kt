@@ -31,9 +31,16 @@ class TeamManagementActivity : AppCompatActivity() {
         db = FirebaseFirestore.getInstance()
 
         // Set up RecyclerView for players
-        playerAdapter = PlayerAdapter(playerList) { clickedplayer ->
-            editPlayer(clickedplayer)
-        }
+        playerAdapter = PlayerAdapter(
+            playerList,
+            onPlayerClicked = { clickedPlayer -> editPlayer(clickedPlayer) },
+            onPlayerLongClicked = { longClickedPlayer ->
+                playerList.removeIf { it.id == longClickedPlayer.id }
+                sortPlayerList()
+                Toast.makeText(this, "${longClickedPlayer.name} deleted", Toast.LENGTH_SHORT).show()
+            }
+        )
+
         ui.recyclerPlayers.layoutManager = LinearLayoutManager(this)
         ui.recyclerPlayers.adapter = playerAdapter
 
