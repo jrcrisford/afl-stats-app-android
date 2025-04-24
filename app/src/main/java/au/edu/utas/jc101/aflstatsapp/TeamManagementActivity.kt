@@ -16,9 +16,12 @@ class TeamManagementActivity : AppCompatActivity() {
     private lateinit var ui: ActivityTeamManagementBinding
     private lateinit var db: FirebaseFirestore
 
+    // All saved teams in Firestore
     private val teams = mutableListOf<Team>()
+    // Players in the selected team
     private var playerList = mutableListOf<Player>()
     private lateinit var playerAdapter: PlayerAdapter
+    // Tracks original name for rename operation
     private var originalTeamName: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,17 +41,19 @@ class TeamManagementActivity : AppCompatActivity() {
                 playerList.removeIf { it.id == longClickedPlayer.id }
                 sortPlayerList()
                 Toast.makeText(this, "${longClickedPlayer.name} deleted", Toast.LENGTH_SHORT).show()
+                Log.d("DEBUG", "Player ${longClickedPlayer.name} deleted")
             }
         )
-
         ui.recyclerPlayers.layoutManager = LinearLayoutManager(this)
         ui.recyclerPlayers.adapter = playerAdapter
 
+        // Set up Spinner for team selection
         val sortOptions = listOf("Name A-Z", "Name Z-A", "Jersy Number")
         val sortAdapter = ArrayAdapter(this, R.layout.simple_spinner_item, sortOptions)
         sortAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
         ui.spinnerSortPlayers.adapter = sortAdapter
 
+        // Apply sorting to players
         ui.spinnerSortPlayers.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -65,7 +70,7 @@ class TeamManagementActivity : AppCompatActivity() {
             }
         }
 
-
+        // Load existing teams from Firestore
         loadTeams()
 
         // Create new player
@@ -80,17 +85,21 @@ class TeamManagementActivity : AppCompatActivity() {
             ).show()
         }
 
-        // SaveTeam
+        // Save Team
         ui.btnSaveTeam.setOnClickListener {
             saveTeam()
         }
 
+        // DEBUG: Add a debug team
         val DebugMode = true
         if (DebugMode) {
             addDebugTeam()
         }
     }
 
+    /**
+     * Load teams from Firestore and populate the spinner.
+     */
     private fun loadTeams() {
         db.collection("teams")
             .get()
@@ -118,6 +127,10 @@ class TeamManagementActivity : AppCompatActivity() {
             }
     }
 
+    /**
+     * Update the team spinner with the list of teams.
+     * Also handles the selection of a team.
+     */
     private fun updateTeamSpinner() {
         val teamNames = mutableListOf<String>("New Team")
         teamNames.addAll(teams.map { it.name })
@@ -157,6 +170,11 @@ class TeamManagementActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Load the currently selected team's data into the UI.
+     *
+     * @param selectedTeam The team to load data for.
+     */
     private fun loadTeamData(selectedTeam: Team) {
         ui.edtTeamName.setText(selectedTeam.name)
 
@@ -165,8 +183,14 @@ class TeamManagementActivity : AppCompatActivity() {
 
         playerAdapter.notifyDataSetChanged()
         originalTeamName = selectedTeam.name
+        Log.d("DEBUG", "Loaded team data for: ${selectedTeam.name}")
     }
 
+    /**
+     * Launches a dialog to edit a player's details.
+     *
+     * @param player The player to edit.
+     */
     private fun editPlayer(player: Player) {
         PlayerAddEditDialog(
             context = this,
@@ -176,11 +200,15 @@ class TeamManagementActivity : AppCompatActivity() {
                 if (index != -1) {
                     playerList[index] = updatedPlayer
                     sortPlayerList()
+                    Log.d("DEBUG", "Player ${updatedPlayer.name} updated")
                 }
             }
         ).show()
     }
 
+    /**
+     * Sorts the player list based on the selected option in the spinner.
+     */
     private fun sortPlayerList() {
         when (ui.spinnerSortPlayers.selectedItemPosition) {
             0 -> {
@@ -205,6 +233,9 @@ class TeamManagementActivity : AppCompatActivity() {
         playerAdapter.notifyDataSetChanged()
     }
 
+    /**
+     * Saves the current team to Firestore.
+     */
     private fun saveTeam() {
         val teamName = ui.edtTeamName.text.toString().trim()
 
