@@ -30,13 +30,13 @@
 
         <!-- Final Score Summary -->
         <TextView
-            android:id="@+id/txtFinalScoreSummary"
+            android:id="@+id/txtMatchName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Final Score: Team A 5.4 (34) vs Team B 4.5 (29)"
-            android:textSize="18sp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginBottom="16dp"
-            android:layout_gravity="center_horizontal" />
+            android:text="TeamA VS TeamB"
+            android:textSize="18sp" />
 
         <!-- Team Stats Comparison Table -->
         <LinearLayout
@@ -56,6 +56,13 @@
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp"
                 android:gravity="center" />
+
+            <Spinner
+                android:id="@+id/spinnerQuarterFilter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                />
 
             <!-- Stat Rows (one each stat) -->
             <LinearLayout
@@ -151,35 +158,6 @@
             </LinearLayout>
 
             <!-- Score row -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="3"
-                android:layout_marginBottom="8dp">
-
-                <TextView
-                    android:id="@+id/txtStatLabelScore"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Score:"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/txtTeamAScore"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="0" />
-
-                <TextView
-                    android:id="@+id/txtTeamBScore"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="0" />
-            </LinearLayout>
         </LinearLayout>
 
         <!-- Quarterly Score Breakdown -->

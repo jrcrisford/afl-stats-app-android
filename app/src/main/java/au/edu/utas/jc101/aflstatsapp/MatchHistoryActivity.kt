@@ -21,6 +21,8 @@ class MatchHistoryActivity : AppCompatActivity() {
     private val matchList = mutableListOf<String>()
     // Stores the currently selected match ID
     private var selectedMatch: String? = null
+    // Stores the currently filtered quarter
+    private var selectedQuarter = 0
 
     private var teamAName: String = "Team A"
     private var teamBName: String = "Team B"
@@ -64,7 +66,30 @@ class MatchHistoryActivity : AppCompatActivity() {
 
         loadMatchList()
 
-        // Set up the button to add a new player
+        // Set up the spinner to filter stats by quarters
+        val quarters = listOf("Full Match", "Q1", "Q2", "Q3", "Q4")
+        val quarterAdapter = ArrayAdapter(this, R.layout.simple_spinner_item, quarters)
+        quarterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        ui.spinnerQuarterFilter.adapter = quarterAdapter
+
+        ui.spinnerQuarterFilter.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>,
+                    view: View,
+                    position: Int,
+                    id: Long
+                ) {
+                    selectedQuarter = position
+                    updateTeamStats()
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>) {
+                    // Do nothing
+                }
+            }
+
+        // Set up the button to compare players
         ui.btnComparePlayers.setOnClickListener {
             if (allPlayers.isNotEmpty()) {
                 PlayerSelectionDialog(
@@ -189,7 +214,7 @@ class MatchHistoryActivity : AppCompatActivity() {
                     Log.d("DEBUG", "Grouped actions by quarter: $actionsByQuarter")
                     updateQuarterlyScore(actionsByQuarter)
 
-                    updateTeamStats(scoreData)
+                    updateTeamStats()
                     updatePlayerStats()
                     updateActionList()
                 } else {
@@ -207,34 +232,43 @@ class MatchHistoryActivity : AppCompatActivity() {
      *
      * @param scoreData The score data retrieved from Firestore.
      */
-    private fun updateTeamStats(scoreData: Map<String, Any>?) {
-        // Load Goals and Behinds
-        val teamAGoals =
-            ((scoreData?.get("teamA") as? Map<*, *>)?.get("goals") as? Long)?.toInt() ?: 0
-        val teamABehinds =
-            ((scoreData?.get("teamA") as? Map<*, *>)?.get("behinds") as? Long)?.toInt() ?: 0
-        val teamBGoals =
-            ((scoreData?.get("teamB") as? Map<*, *>)?.get("goals") as? Long)?.toInt() ?: 0
-        val teamBBehinds =
-            ((scoreData?.get("teamB") as? Map<*, *>)?.get("behinds") as? Long)?.toInt() ?: 0
+    private fun updateTeamStats() {
+        // Update the team names in the UI
+        ui.txtMatchName.text = "$teamAName VS $teamBName"
 
-        // Calculate total scores
-        val teamATotal = teamBGoals * 6 + teamABehinds
-        val teamBTotal = teamBGoals * 6 + teamBBehinds
+        val filteredPlayers = if (selectedQuarter == 0) {
+            allPlayers // All quarters (no filter)
+        } else {
+            allPlayers.map { player ->
+                val quarter = selectedQuarter
+                val filteredActions = player.actionTimestamps.filter {
+                    (it["quarter"] as? Long)?.toInt() == quarter
+                }
 
-        // Update UI with team names and scores
-        ui.txtFinalScoreSummary.text =
-            "$teamAName $teamAGoals.$teamABehinds ($teamATotal) vs $teamBName $teamBGoals.$teamBBehinds ($teamBTotal)"
+                val kicks = filteredActions.count { it["action"] == "kick" }
+                val handballs = filteredActions.count { it["action"] == "handball" }
+                val marks = filteredActions.count { it["action"] == "mark" }
+                val tackles = filteredActions.count { it["action"] == "tackle" }
 
-        // Find players for each team and calculate stats
-        val disposalsA =
-            allPlayers.filter { it.team == teamAName }.sumOf { it.kicks + it.handballs }
-        val disposalsB =
-            allPlayers.filter { it.team == teamBName }.sumOf { it.kicks + it.handballs }
-        val marksA = allPlayers.filter { it.team == teamAName }.sumOf { it.marks }
-        val marksB = allPlayers.filter { it.team == teamBName }.sumOf { it.marks }
-        val tacklesA = allPlayers.filter { it.team == teamAName }.sumOf { it.tackles }
-        val tacklesB = allPlayers.filter { it.team == teamBName }.sumOf { it.tackles }
+                player.copy(
+                    kicks = kicks,
+                    handballs = handballs,
+                    marks = marks,
+                    tackles = tackles
+                )
+            }
+        }
+
+        val teamAPlayers = filteredPlayers.filter { it.team == teamAName }
+        val teamBPlayers = filteredPlayers.filter { it.team == teamBName }
+
+        // Calculate stats for both teams
+        val disposalsA = teamAPlayers.sumOf { it.kicks + it.handballs }
+        val disposalsB = teamBPlayers.sumOf { it.kicks + it.handballs }
+        val marksA = teamAPlayers.sumOf { it.marks }
+        val marksB = teamBPlayers.sumOf { it.marks }
+        val tacklesA = teamAPlayers.sumOf { it.tackles }
+        val tacklesB = teamBPlayers.sumOf { it.tackles }
 
         // Update UI with team stats
         ui.txtTeamADisposals.text = disposalsA.toString()
@@ -243,14 +277,11 @@ class MatchHistoryActivity : AppCompatActivity() {
         ui.txtTeamBMarks.text = marksB.toString()
         ui.txtTeamATackles.text = tacklesA.toString()
         ui.txtTeamBTackles.text = tacklesB.toString()
-        ui.txtTeamAScore.text = formatScore(allPlayers.filter { it.team == teamAName })
-        ui.txtTeamBScore.text = formatScore(allPlayers.filter { it.team == teamBName })
 
         // Highlight the better team's stats
         statHighlighting(ui.txtTeamADisposals, ui.txtTeamBDisposals, disposalsA, disposalsB)
         statHighlighting(ui.txtTeamAMarks, ui.txtTeamBMarks, marksA, marksB)
         statHighlighting(ui.txtTeamATackles, ui.txtTeamBTackles, tacklesA, tacklesB)
-        statHighlighting(ui.txtTeamAScore, ui.txtTeamBScore, teamATotal, teamBTotal)
     }
 
     /**
