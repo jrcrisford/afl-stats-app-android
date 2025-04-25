@@ -2,6 +2,7 @@ package au.edu.utas.jc101.aflstatsapp
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
@@ -33,6 +34,10 @@ class MatchTrackingActivity : AppCompatActivity() {
     private var isQuarterOngoing = false
     // Store the quarter start time
     private var quarterStartTime: Long = 0L
+    // Track the time elapsed in the current quarter
+    private var quarterTimer: CountDownTimer? = null
+    // Quarter duration in milliseconds (20 seconds for testing)
+    private val quarterDuration = 20 * 1000L
     // Store the match total time
     private var totalGameTime: Long = 0L
     // Score variable for both teams
@@ -355,16 +360,6 @@ class MatchTrackingActivity : AppCompatActivity() {
     }
 
     /**
-    * Updates the score display on the UI with the current scores for both teams.
-    */
-    private fun updateScoreDisplay() {
-        val teamAScore = "$teamAGoals.$teamABehinds (${teamAGoals * 6 + teamABehinds})"
-        val teamBScore = "$teamBGoals.$teamBBehinds (${teamBGoals * 6 + teamBBehinds})"
-
-        ui.txtScore.text = "$teamAName: $teamAScore vs $teamBName: $teamBScore"
-    }
-
-    /**
      * Starts a new quarter of the match.
      */
     private fun startQuarter() {
@@ -373,6 +368,22 @@ class MatchTrackingActivity : AppCompatActivity() {
         Toast.makeText(this, "Quarter $currentQuarter started", Toast.LENGTH_SHORT).show()
         Log.d("DEBUG", "Quarter $currentQuarter started")
         ui.btnQuarterToggle.text = "End Quarter $currentQuarter"
+
+        // Start the quarter timer
+        quarterTimer?.cancel()
+        quarterTimer = object : CountDownTimer(quarterDuration, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                val minutes = (millisUntilFinished / 1000) / 60
+                val seconds = (millisUntilFinished / 1000) % 60
+                ui.txtQuarterTimer.text =
+                    String.format("Q$currentQuarter: %02d:%02d", minutes, seconds)
+            }
+            override fun onFinish() {
+                Toast.makeText(this@MatchTrackingActivity, "Quarter $currentQuarter auto-ended", Toast.LENGTH_SHORT).show()
+                Log.d("DEBUG", "Quarter $currentQuarter auto-ended")
+                endQuarter()
+            }
+        }.start()
     }
 
     /**
@@ -380,14 +391,19 @@ class MatchTrackingActivity : AppCompatActivity() {
      */
     private fun endQuarter() {
         isQuarterOngoing = false
+        quarterTimer?.cancel()
         totalGameTime += System.currentTimeMillis() - quarterStartTime
+
         Toast.makeText(this, "Quarter $currentQuarter ended", Toast.LENGTH_SHORT).show()
         Log.d("DEBUG", "Quarter $currentQuarter ended")
+
         ui.btnQuarterToggle.text = if (currentQuarter < 4) {
             "Start Quarter ${currentQuarter + 1}"
         } else {
             "Match Complete"
         }
+
+        ui.txtQuarterTimer.text = "Q$currentQuarter ended"
 
         // Increment the quarter number if not Q4
         if (currentQuarter < 4) {
@@ -396,5 +412,15 @@ class MatchTrackingActivity : AppCompatActivity() {
             ui.btnQuarterToggle.isEnabled = false
             Toast.makeText(this, "Match is complete", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    /**
+     * Updates the score display on the UI with the current scores for both teams.
+     */
+    private fun updateScoreDisplay() {
+        val teamAScore = "$teamAGoals.$teamABehinds (${teamAGoals * 6 + teamABehinds})"
+        val teamBScore = "$teamBGoals.$teamBBehinds (${teamBGoals * 6 + teamBBehinds})"
+
+        ui.txtScore.text = "$teamAName: $teamAScore vs $teamBName: $teamBScore"
     }
 }

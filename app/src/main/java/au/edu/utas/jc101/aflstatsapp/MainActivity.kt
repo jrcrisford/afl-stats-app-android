@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity()
                     Log.e("UPLOAD", "Failed to import team '$teamName'", e)
                 }
         }
-        
+
         db.collection("matches").document(matchId)
             .set(matchData.toMap())
             .addOnSuccessListener {
