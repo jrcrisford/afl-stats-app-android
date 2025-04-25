@@ -166,6 +166,29 @@ class MatchHistoryActivity : AppCompatActivity() {
 
                     Log.d("DEBUG", "Loaded ${allPlayers.size} players for match $matchId")
 
+                    // Collect actions per quarter
+                    val actionsByQuarter =  mutableMapOf<Int, MutableList<Pair<String, Any>>>()
+
+                    // Loop through all players and their action timestamps and find which quarter each action occurred in
+                    for (player in allPlayers) {
+                        for (action in player.actionTimestamps) {
+                            val actionType = action["action"] ?: continue
+                            if (actionType != "goal" && actionType != "behind") continue
+
+                            val quarter = (action["quarter"] as? Long)?.toInt() ?: continue
+                            val team = player.team
+
+                            if (!actionsByQuarter.containsKey(quarter)) {
+                                actionsByQuarter[quarter] = mutableListOf()
+                            }
+
+                            actionsByQuarter[quarter]?.add(Pair(team, actionType))
+                        }
+                    }
+
+                    Log.d("DEBUG", "Grouped actions by quarter: $actionsByQuarter")
+                    updateQuarterlyScore(actionsByQuarter)
+
                     updateTeamStats(scoreData)
                     updatePlayerStats()
                     updateActionList()
@@ -179,41 +202,8 @@ class MatchHistoryActivity : AppCompatActivity() {
     }
 
     /**
-     * Highlights the better team's stat in green and the other team's stat in white.
-     * If both stats are equal, both are highlighted in blue.
-     *
-     * @param view1 The TextView for the first team.
-     * @param view2 The TextView for the second team.
-     * @param stat1 The stat value for the first team.
-     * @param stat2 The stat value for the second team.
-     */
-    private fun statHighlighting(view1: TextView, view2: TextView, stat1: Int, stat2: Int) =
-        if (stat1 > stat2) {
-            view1.setTextColor(Color.GREEN)
-            view2.setTextColor(Color.WHITE)
-        } else if (stat2 > stat1) {
-            view2.setTextColor(Color.GREEN)
-            view1.setTextColor(Color.WHITE)
-        } else {
-            view1.setTextColor(Color.BLUE)
-            view2.setTextColor(Color.BLUE)
-        }
-
-    /**
-     * Formats the score for display, converting goals and behinds into a string
-     * in the Goals.Behinds (Total) format.
-     *
-     * @param players The list of players to calculate the score from.
-     */
-    private fun formatScore(players: List<Player>): String {
-        val goals = players.sumOf { it.goals }
-        val behinds = players.sumOf { it.behinds }
-        val total = goals * 6 + behinds
-        return "$goals.$behinds ($total)"
-    }
-
-    /**
-     * Updates the team stats displayed in the UI.
+     * Calculates score values based on goal and behind actions and
+     * updates the team stats displayed in the UI.
      *
      * @param scoreData The score data retrieved from Firestore.
      */
@@ -264,6 +254,54 @@ class MatchHistoryActivity : AppCompatActivity() {
     }
 
     /**
+     * Calculates score values based on goal and behind actions and
+     * updates the quarterly score display in the UI.
+     *
+     * @param actionsByQuarter The actions grouped by quarter.
+     */
+    private fun updateQuarterlyScore(actionsByQuarter: Map<Int, List<Pair<String, Any>>>) {
+        val quarters = listOf(1, 2, 3, 4)
+        val uiRows = listOf(
+            Triple(ui.txtQ1TeamA, ui.txtQ1Label, ui.txtQ1TeamB),
+            Triple(ui.txtQ2TeamA, ui.txtQ2Label, ui.txtQ2TeamB),
+            Triple(ui.txtQ3TeamA, ui.txtQ3Label, ui.txtQ3TeamB),
+            Triple(ui.txtQFinalTeamA, ui.txtQFinalLabel, ui.txtQFinalTeamB)
+        )
+
+        var cumulativeGoalsA = 0
+        var cumulativeBehindsA = 0
+        var cumulativeGoalsB = 0
+        var cumulativeBehindsB = 0
+
+        for ((index, quarter) in quarters.withIndex()) {
+            val actions = actionsByQuarter[quarter] ?: emptyList()
+
+            var goalsA = actions.count { it.first == teamAName && it.second == "goal" }
+            var behindsA = actions.count { it.first == teamAName && it.second == "behind" }
+            var goalsB = actions.count { it.first == teamBName && it.second == "goal" }
+            var behindsB = actions.count { it.first == teamBName && it.second == "behind" }
+
+            cumulativeGoalsA += goalsA
+            cumulativeBehindsA += behindsA
+            cumulativeGoalsB += goalsB
+            cumulativeBehindsB += behindsB
+
+            val totalA = cumulativeGoalsA * 6 + cumulativeBehindsA
+            val totalB = cumulativeGoalsB * 6 + cumulativeBehindsB
+
+            val txtTeamA = uiRows[index].first
+            val txtLabel = uiRows[index].second
+            val txtTeamB = uiRows[index].third
+
+            txtTeamA.text = "$cumulativeGoalsA.$cumulativeBehindsA ($totalA)"
+            txtLabel.text = if (quarter == 4) "Final" else "Q$quarter"
+            txtTeamB.text = "$cumulativeGoalsB.$cumulativeBehindsB ($totalB)"
+
+            statHighlighting(txtTeamA, txtTeamB, totalA, totalB)
+        }
+    }
+
+    /**
      * Updates the player stats displayed in the RecyclerView.
      */
     private fun updatePlayerStats() {
@@ -276,7 +314,7 @@ class MatchHistoryActivity : AppCompatActivity() {
      * It sorts the actions by timestamp and displays them in the ListView.
      */
     private fun updateActionList() {
-        val actionPairs = mutableListOf<Pair<String, String>>()
+        val actionTriples = mutableListOf<Triple<Int, String, String>>() // quarter, sort key, text
 
         // Loop through all players and their action timestamps
         for (player in allPlayers) {
@@ -284,14 +322,18 @@ class MatchHistoryActivity : AppCompatActivity() {
             for (action in player.actionTimestamps) {
                 val actionType = action["action"] ?: "Unknown action"
                 val timestamp = action["timestamp"] as? String ?: "Unknown timestamp"
-                val text = "${player.name} #${player.number}: $actionType at $timestamp"
-                actionPairs.add(Pair(timestamp, text))
+                val quarterTime = action["quarterTime"] as? String ?: "Unknown quarter time"
+                val quarter = (action["quarter"] as? Long)?.toInt() ?: -1
+
+                val text = "${player.name} #${player.number}: $actionType | Q$quarter @ $quarterTime (game: $timestamp)"
+                val sortKey = "$quarterTime-$timestamp"
+                actionTriples.add(Triple(quarter, sortKey, text))
             }
         }
 
         // Sort the actions by timestamp
-        val sortedActions = actionPairs.sortedBy { it.first }
-        val actionTexts = sortedActions.map { it.second }
+        val sortedActions = actionTriples.sortedWith(compareBy({ it.first }, { it.second }))
+        val actionTexts = sortedActions.map { it.third }
 
         Log.d("DEBUG", "Action texts: $actionTexts")
 
@@ -313,5 +355,39 @@ class MatchHistoryActivity : AppCompatActivity() {
         ui.actionsListView.layoutParams = params
 
         ui.actionsListView.requestLayout()
+    }
+
+    /**
+     * Highlights the better team's stat in green and the other team's stat in white.
+     * If both stats are equal, both are highlighted in blue.
+     *
+     * @param view1 The TextView for the first team.
+     * @param view2 The TextView for the second team.
+     * @param stat1 The stat value for the first team.
+     * @param stat2 The stat value for the second team.
+     */
+    private fun statHighlighting(view1: TextView, view2: TextView, stat1: Int, stat2: Int) =
+        if (stat1 > stat2) {
+            view1.setTextColor(Color.GREEN)
+            view2.setTextColor(Color.WHITE)
+        } else if (stat2 > stat1) {
+            view2.setTextColor(Color.GREEN)
+            view1.setTextColor(Color.WHITE)
+        } else {
+            view1.setTextColor(Color.BLUE)
+            view2.setTextColor(Color.BLUE)
+        }
+
+    /**
+     * Formats the score for display, converting goals and behinds into a string
+     * in the Goals.Behinds (Total) format.
+     *
+     * @param players The list of players to calculate the score from.
+     */
+    private fun formatScore(players: List<Player>): String {
+        val goals = players.sumOf { it.goals }
+        val behinds = players.sumOf { it.behinds }
+        val total = goals * 6 + behinds
+        return "$goals.$behinds ($total)"
     }
 }

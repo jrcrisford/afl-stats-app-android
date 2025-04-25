@@ -27,6 +27,14 @@ class MatchTrackingActivity : AppCompatActivity() {
     private var lastKicker: Player? = null
     // Store the match start time
     private var startTime: Long = 0L
+    // Store the current quarter of the match
+    private var currentQuarter = 1
+    // Flag to indicate if a quarter is on going
+    private var isQuarterOngoing = false
+    // Store the quarter start time
+    private var quarterStartTime: Long = 0L
+    // Store the match total time
+    private var totalGameTime: Long = 0L
     // Score variable for both teams
     private var teamAGoals = 0
     private var teamABehinds = 0
@@ -56,6 +64,9 @@ class MatchTrackingActivity : AppCompatActivity() {
             Log.e("DEBUG", "Match ID is empty, cannot load match data")
         }
 
+        // Update the quarter toggle with the current quarter
+        ui.btnQuarterToggle.text = "Start Quarter $currentQuarter"
+
         // Set action and end button listeners
         ui.btnKick.setOnClickListener { recordAction("kick") }
         ui.btnHandball.setOnClickListener { recordAction("handball") }
@@ -63,8 +74,15 @@ class MatchTrackingActivity : AppCompatActivity() {
         ui.btnTackle.setOnClickListener { recordAction("tackle") }
         ui.btnGoal.setOnClickListener { recordAction("goal") }
         ui.btnBehind.setOnClickListener { recordAction("behind") }
+        ui.btnQuarterToggle.setOnClickListener {
+            if (isQuarterOngoing) {
+                endQuarter()
+            } else {
+                startQuarter()
+            }
+        }
         ui.btnEndMatch.setOnClickListener {
-            val timestamp = com.google.firebase.Timestamp.now()
+            val timestamp = Timestamp.now()
 
             // Update the match document in Firestore to set the end time
             db.collection("matches")
@@ -188,12 +206,26 @@ class MatchTrackingActivity : AppCompatActivity() {
             return
         }
 
+        if (!isQuarterOngoing) {
+            Log.w("DEBUG", "Action not allowed: quarter is not active")
+            Toast.makeText(this, "You must start the quarter to record actions", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val player = selectedPlayer!!
-        val currentTime = Timestamp.now()
-        val elapsedTime = currentTime.toDate().time - startTime
-        val minutes = (elapsedTime / 1000) / 60
-        val seconds = (elapsedTime / 1000) % 60
-        val formattedTime = String.format("%d:%02d", minutes, seconds)
+
+        val currentTime = System.currentTimeMillis()
+
+        val gameElapsedTime = totalGameTime + (currentTime - quarterStartTime)
+        val quarterElapsedTime = currentTime - quarterStartTime
+
+        val gameMinutes = (gameElapsedTime / 1000) / 60
+        val gameSeconds = (gameElapsedTime / 1000) % 60
+        val quarterMinutes = (quarterElapsedTime / 1000) / 60
+        val quarterSeconds = (quarterElapsedTime / 1000) % 60
+
+        val formattedGameTime = String.format("%d:%02d", gameMinutes, gameSeconds)
+        val formattedQuarterTime = String.format("%d:%02d", quarterMinutes, quarterSeconds)
 
         // Update the local player's stat based on the action type and whether the action is valid
         when (actionType) {
@@ -265,8 +297,13 @@ class MatchTrackingActivity : AppCompatActivity() {
         }
 
         // Record the action timestamp and update Firestore
-        player.actionTimestamps.add(mapOf("action" to actionType, "timestamp" to formattedTime))
-        Log.d("DEBUG", "Action recorded at $formattedTime for player: ${player.name}")
+        player.actionTimestamps.add(
+            mapOf(
+                "action" to actionType,
+                "timestamp" to formattedGameTime,
+                "quarterTime" to formattedQuarterTime,
+                "quarter" to currentQuarter))
+        Log.d("DEBUG", "Action recorded: $actionType for ${player.name} in Q$currentQuarter at $formattedQuarterTime (game: $formattedGameTime)")
         updateFirestore(player, actionType)
         updateScoreDisplay()
     }
@@ -325,5 +362,39 @@ class MatchTrackingActivity : AppCompatActivity() {
         val teamBScore = "$teamBGoals.$teamBBehinds (${teamBGoals * 6 + teamBBehinds})"
 
         ui.txtScore.text = "$teamAName: $teamAScore vs $teamBName: $teamBScore"
+    }
+
+    /**
+     * Starts a new quarter of the match.
+     */
+    private fun startQuarter() {
+        isQuarterOngoing = true
+        quarterStartTime = System.currentTimeMillis()
+        Toast.makeText(this, "Quarter $currentQuarter started", Toast.LENGTH_SHORT).show()
+        Log.d("DEBUG", "Quarter $currentQuarter started")
+        ui.btnQuarterToggle.text = "End Quarter $currentQuarter"
+    }
+
+    /**
+     * Ends the current quarter of the match.
+     */
+    private fun endQuarter() {
+        isQuarterOngoing = false
+        totalGameTime += System.currentTimeMillis() - quarterStartTime
+        Toast.makeText(this, "Quarter $currentQuarter ended", Toast.LENGTH_SHORT).show()
+        Log.d("DEBUG", "Quarter $currentQuarter ended")
+        ui.btnQuarterToggle.text = if (currentQuarter < 4) {
+            "Start Quarter ${currentQuarter + 1}"
+        } else {
+            "Match Complete"
+        }
+
+        // Increment the quarter number if not Q4
+        if (currentQuarter < 4) {
+            currentQuarter++
+        } else {
+            ui.btnQuarterToggle.isEnabled = false
+            Toast.makeText(this, "Match is complete", Toast.LENGTH_SHORT).show()
+        }
     }
 }

@@ -182,6 +182,199 @@
             </LinearLayout>
         </LinearLayout>
 
+        <!-- Quarterly Score Breakdown -->
+        <LinearLayout
+            android:id="@+id/layoutQuarterlyScores"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            android:padding="8dp">
+
+            <!-- Title -->
+            <TextView
+                android:id="@+id/txtQuarterlyBreakdownTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Quarterly Score Breakdown"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:gravity="center"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Header Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3"
+                android:layout_marginBottom="4dp">
+
+                <TextView
+                    android:id="@+id/txtHeadingTeamA"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Team A"
+                    android:textStyle="bold"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/txtHeadingQuarter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Quarter"
+                    android:textStyle="bold"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/txtHeadingTeamB"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Team B"
+                    android:textStyle="bold"
+                    android:gravity="center" />
+            </LinearLayout>
+
+            <!-- Q1 Row -->
+            <LinearLayout
+                android:id="@+id/layoutQ1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <TextView
+                    android:id="@+id/txtQ1TeamA"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="0.0 (0)" />
+
+                <TextView
+                    android:id="@+id/txtQ1Label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Q1"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtQ1TeamB"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="0.0 (0)" />
+            </LinearLayout>
+
+            <!-- Q2 Row -->
+            <LinearLayout
+                android:id="@+id/layoutQ2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <TextView
+                    android:id="@+id/txtQ2TeamA"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="0.0 (0)" />
+
+                <TextView
+                    android:id="@+id/txtQ2Label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Q2"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtQ2TeamB"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="0.0 (0)" />
+            </LinearLayout>
+
+            <!-- Q3 Row -->
+            <LinearLayout
+                android:id="@+id/layoutQ3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <TextView
+                    android:id="@+id/txtQ3TeamA"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="0.0 (0)" />
+
+                <TextView
+                    android:id="@+id/txtQ3Label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Q3"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtQ3TeamB"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="0.0 (0)" />
+            </LinearLayout>
+
+            <!-- Q4 Row -->
+            <LinearLayout
+                android:id="@+id/layoutQ4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <TextView
+                    android:id="@+id/txtQFinalTeamA"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="0.0 (0)" />
+
+                <TextView
+                    android:id="@+id/txtQFinalLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Final"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtQFinalTeamB"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="0.0 (0)" />
+            </LinearLayout>
+        </LinearLayout>
+
         <!-- Player Stats Section -->
         <TextView
             android:id="@+id/txtPlayerStatsTitle"

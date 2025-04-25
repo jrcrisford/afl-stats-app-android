@@ -102,13 +102,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <!-- End Quarter Button -->
+    <Button
+        android:id="@+id/btnQuarterToggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start Quarter"
+        app:layout_constraintTop_toBottomOf="@id/txtSelectedPlayer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <!-- End Match Button -->
     <Button
         android:id="@+id/btnEndMatch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="End Match"
-        app:layout_constraintTop_toBottomOf="@id/txtSelectedPlayer"
+        app:layout_constraintTop_toBottomOf="@+id/btnQuarterToggle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
