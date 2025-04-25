@@ -17,6 +17,14 @@
         android:textStyle="bold"
         android:layout_marginTop="16dp" />
 
+    <Spinner
+        android:id="@+id/spinnerQuarterFilter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        />
+
     <!-- Player Names at Top -->
     <LinearLayout
         android:layout_width="match_parent"
