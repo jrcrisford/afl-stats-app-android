@@ -320,7 +320,7 @@
         "handballs": 0,
         "marks": 2,
         "tackles": 2,
-        "goals": 1,
+        "goals": 0,
         "behinds": 1,
         "actionTimestamps": [
           {
@@ -959,7 +959,7 @@
         "handballs": 1,
         "marks": 3,
         "tackles": 1,
-        "goals": 1,
+        "goals": 3,
         "behinds": 0,
         "actionTimestamps": [
           {
@@ -1087,7 +1087,7 @@
         "handballs": 0,
         "marks": 2,
         "tackles": 4,
-        "goals": 1,
+        "goals": 2,
         "behinds": 2,
         "actionTimestamps": [
           {
@@ -1234,14 +1234,14 @@
     },
     "score": {
       "teamA": {
-        "goals": 20,
+        "goals": 19,
         "behinds": 11,
-        "score": 131
+        "score": 125
       },
       "teamB": {
-        "goals": 16,
+        "goals": 19,
         "behinds": 17,
-        "score": 113
+        "score": 131
       }
     }
   }

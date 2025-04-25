@@ -40,7 +40,7 @@ class MatchHistoryActivity : AppCompatActivity() {
 
         // Set up match selection spinner
         val matchAdapter = ArrayAdapter(this, R.layout.simple_spinner_item, matchList)
-        matchAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        matchAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
         ui.spinnerMatchSelection.adapter = matchAdapter
 
         // Set up the spinner to show the match list
@@ -69,7 +69,7 @@ class MatchHistoryActivity : AppCompatActivity() {
         // Set up the spinner to filter stats by quarters
         val quarters = listOf("Full Match", "Q1", "Q2", "Q3", "Q4")
         val quarterAdapter = ArrayAdapter(this, R.layout.simple_spinner_item, quarters)
-        quarterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        quarterAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
         ui.spinnerQuarterFilter.adapter = quarterAdapter
 
         ui.spinnerQuarterFilter.onItemSelectedListener =
@@ -162,7 +162,6 @@ class MatchHistoryActivity : AppCompatActivity() {
                     teamAName = document.getString("teamAName") ?: "Team A"
                     teamBName = document.getString("teamBName") ?: "Team B"
                     val rawPlayerStats = document.get("playerStats") as? Map<String, Any>
-                    val scoreData = document.get("score") as? Map<String, Any>
 
                     // Clear the existing player list
                     allPlayers.clear()
@@ -221,20 +220,34 @@ class MatchHistoryActivity : AppCompatActivity() {
                     Log.w("FIRESTORE", "No such match document")
                 }
             }
-            .addOnFailureListener() { exception ->
+            .addOnFailureListener { exception ->
                 Log.e("FIRESTORE", "Error loading match details: ", exception)
             }
     }
 
     /**
-     * Calculates score values based on goal and behind actions and
-     * updates the team stats displayed in the UI.
-     *
-     * @param scoreData The score data retrieved from Firestore.
+     * Calculates, updates and displays team stats for the selected match and quarter.
+     * Highlights the winning team and better-performing stats with colour.
      */
     private fun updateTeamStats() {
         // Update the team names in the UI
-        ui.txtMatchName.text = "$teamAName VS $teamBName"
+        val finalScoreA = allPlayers.filter { it.team == teamAName }.sumOf { it.goals * 6 + it.behinds }
+        val finalScoreB = allPlayers.filter { it.team == teamBName }.sumOf { it.goals * 6 + it.behinds }
+
+        ui.txtTeamAName.text = teamAName
+        ui.txtTeamBName.text = teamBName
+
+        // Apply color to highlight the winning team
+        if (finalScoreA > finalScoreB) {
+            ui.txtTeamAName.setTextColor(Color.GREEN)
+            ui.txtTeamBName.setTextColor(Color.WHITE)
+        } else if (finalScoreB > finalScoreA) {
+            ui.txtTeamAName.setTextColor(Color.WHITE)
+            ui.txtTeamBName.setTextColor(Color.GREEN)
+        } else {
+            ui.txtTeamAName.setTextColor(Color.BLUE)
+            ui.txtTeamBName.setTextColor(Color.BLUE)
+        }
 
         val filteredPlayers = if (selectedQuarter == 0) {
             allPlayers // All quarters (no filter)
@@ -368,11 +381,7 @@ class MatchHistoryActivity : AppCompatActivity() {
 
         Log.d("DEBUG", "Action texts: $actionTexts")
 
-        val adapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_list_item_1,
-            actionTexts
-        )
+        val adapter = ArrayAdapter(this, R.layout.simple_list_item_1, actionTexts)
         ui.actionsListView.adapter = adapter
 
         // Expand the ListView to show all items (COPILOT)

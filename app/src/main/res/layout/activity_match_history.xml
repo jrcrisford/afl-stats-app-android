@@ -28,15 +28,37 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp" />
 
-        <!-- Final Score Summary -->
-        <TextView
-            android:id="@+id/txtMatchName"
+        <!-- Match Name -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:gravity="center"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="16dp"
-            android:text="TeamA VS TeamB"
-            android:textSize="18sp" />
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/txtTeamAName"
+                android:text="Team A"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginEnd="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:text="VS"
+                android:textSize="18sp"
+                android:layout_marginEnd="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/txtTeamBName"
+                android:text="Team B"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
 
         <!-- Team Stats Comparison Table -->
         <LinearLayout
