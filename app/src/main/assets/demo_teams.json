@@ -1,0 +1,102 @@
+{
+  "Hobart Hawks": {
+    "name": "Hobart Hawks",
+    "players": [
+      {
+        "id": "HA01",
+        "name": "Ben Wright",
+        "number": 1
+      },
+      {
+        "id": "HA02",
+        "name": "Liam Smith",
+        "number": 2
+      },
+      {
+        "id": "HA03",
+        "name": "Ethan Taylor",
+        "number": 3
+      },
+      {
+        "id": "HA04",
+        "name": "Zac Williams",
+        "number": 4
+      },
+      {
+        "id": "HA05",
+        "name": "Jake Adams",
+        "number": 5
+      },
+      {
+        "id": "HA06",
+        "name": "Oscar Green",
+        "number": 6
+      },
+      {
+        "id": "HA07",
+        "name": "Noah White",
+        "number": 7
+      },
+      {
+        "id": "HA08",
+        "name": "Ryan Brown",
+        "number": 8
+      },
+      {
+        "id": "HA09",
+        "name": "Lucas Johnson",
+        "number": 9
+      }
+    ]
+  },
+  "Launceston Lions": {
+    "name": "Launceston Lions",
+    "players": [
+      {
+        "id": "LL01",
+        "name": "Aiden Murphy",
+        "number": 1
+      },
+      {
+        "id": "LL02",
+        "name": "Charlie Roberts",
+        "number": 2
+      },
+      {
+        "id": "LL03",
+        "name": "Samuel Jones",
+        "number": 3
+      },
+      {
+        "id": "LL04",
+        "name": "Nathan Scott",
+        "number": 4
+      },
+      {
+        "id": "LL05",
+        "name": "Leo Turner",
+        "number": 5
+      },
+      {
+        "id": "LL06",
+        "name": "Matthew Hughes",
+        "number": 6
+      },
+      {
+        "id": "LL07",
+        "name": "Cooper Ellis",
+        "number": 7
+      },
+      {
+        "id": "LL08",
+        "name": "Jack Peterson",
+        "number": 8
+      },
+      {
+        "id": "LL09",
+        "name": "Thomas Bennett",
+        "number": 9
+      }
+    ]
+  }
+}
