@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import au.edu.utas.jc101.aflstatsapp.databinding.ActivityNewMatchBinding
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlin.jvm.Throws
 
 class NewMatchActivity : AppCompatActivity() {
     private lateinit var ui: ActivityNewMatchBinding
@@ -127,6 +128,11 @@ class NewMatchActivity : AppCompatActivity() {
 
         if (teamAName == teamBName) {
             Toast.makeText(this, "You must select two different teams", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (selectedTeamA!!.players.size < 2 || selectedTeamB!!.players.size <2) {
+            Toast.makeText(this, "Each team must have at least 2 players", Toast.LENGTH_SHORT).show()
             return
         }
 
