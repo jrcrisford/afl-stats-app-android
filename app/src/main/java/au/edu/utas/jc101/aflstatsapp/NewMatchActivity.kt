@@ -1,18 +1,25 @@
 package au.edu.utas.jc101.aflstatsapp
 
+import android.R
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import au.edu.utas.jc101.aflstatsapp.databinding.ActivityNewMatchBinding
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 
 class NewMatchActivity : AppCompatActivity() {
     private lateinit var ui: ActivityNewMatchBinding
-    private val teamAPlayers = mutableListOf<Player>()
-    private val teamBPlayers = mutableListOf<Player>()
     private val db = FirebaseFirestore.getInstance()
+
+    private val teams = mutableListOf<Team>()
+    private var selectedTeamA: Team? = null
+    private var selectedTeamB: Team? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,191 +28,148 @@ class NewMatchActivity : AppCompatActivity() {
 
         Log.d("NAVIGATION", "Navigated to NewMatchActivity")
 
-        // DEBUG: Prefill test data
-        val debugMode = true
-        if (debugMode) {
-            prefillData()
-        }
+        loadTeams()
 
-        // Add player to Team A and update UI
-        ui.btnAddPlayerA.setOnClickListener {
-            val name = ui.txtPlayerAName.text.toString().trim()
-            val number = ui.txtPlayerANumber.text.toString().toIntOrNull()
-            val teamName = ui.txtTeamAName.text.toString().trim()
-
-            if (name.isNotEmpty() && number != null && teamName.isNotEmpty()) {
-                // Add player to Team A
-                val newPlayer = createPlayer(name, number, teamName)
-                teamAPlayers.add(newPlayer)
-                Log.d("DEBUG", "Added player: $name (#$number) to $teamName")
-
-                // Update UI for Team A
-                ui.btnAddPlayerA.text = "Add Player to $teamName"
-                if (teamAPlayers.size == 1) {
-                    ui.lblTeamAPlayers.text = "$teamName:\n$name (#$number)"
-                } else {
-                    ui.lblTeamAPlayers.append("\n$name (#$number)")
-                }
-
-                // Clear input fields for Team A
-                ui.txtPlayerAName.text.clear()
-                ui.txtPlayerANumber.text.clear()
-
-                // Check if both teams have enough players to start the match
-                checkIfReadyToStart()
-            } else {
-                Toast.makeText(this, "Please enter a valid name and number", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        // Add player to Team B and update UI
-        ui.btnAddPlayerB.setOnClickListener {
-            val name = ui.txtPlayerBName.text.toString().trim()
-            val number = ui.txtPlayerBNumber.text.toString().toIntOrNull()
-            val teamName = ui.txtTeamBName.text.toString().trim()
-
-            if (name.isNotEmpty() && number != null && teamName.isNotEmpty()) {
-                // Add player to Team B
-                val newPlayer = createPlayer(name, number, teamName)
-                teamBPlayers.add(newPlayer)
-                Log.d("DEBUG", "Added player: $name (#$number) to $teamName")
-
-                // Update UI for Team B
-                ui.btnAddPlayerB.text = "Add Player to $teamName"
-                if (teamBPlayers.size == 1) {
-                    ui.lblTeamBPlayers.text = "$teamName:\n$name (#$number)"
-                } else {
-                    ui.lblTeamBPlayers.append("\n$name (#$number)")
-                }
-
-                // Clear input fields for Team B
-                ui.txtPlayerBName.text.clear()
-                ui.txtPlayerBNumber.text.clear()
-
-                // Check if both teams have enough players to start the match
-                checkIfReadyToStart()
-            } else {
-                Toast.makeText(this, "Please enter a valid name and number", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        // Start match and save to Firestore
         ui.btnStartMatch.setOnClickListener {
-            val teamAName = ui.txtTeamAName.text.toString().trim()
-            val teamBName  = ui.txtTeamBName.text.toString().trim()
-            val timestamp = com.google.firebase.Timestamp.now()
-            val allPlayers = teamAPlayers + teamBPlayers
-            val playerStats = mutableMapOf<String, Any>()
-
-            // Check if both teams have names
-            if (teamAName.isEmpty() || teamBName.isEmpty()) {
-                Toast.makeText(this, "Please enter both team names", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            // Generate unique player IDs and store player stats
-            allPlayers.forEach { player ->
-                val playerID = generatePlayerID(player)
-                playerStats[playerID] = player
-            }
-
-            // Create match data to save to Firestore
-            val matchData = hashMapOf(
-                "teamAName" to teamAName,
-                "teamBName" to teamBName,
-                "startedAt" to timestamp,
-                "score" to mapOf(
-                    "teamA" to mapOf(
-                        "goals" to 0,
-                        "behinds" to 0,
-                        "totalScore" to 0),
-                    "teamB" to mapOf(
-                        "goals" to 0,
-                        "behinds" to 0,
-                        "totalScore" to 0)),
-                "playerStats" to playerStats
-                )
-
-            // Create a matchId
-            val matchId = "$teamAName vs $teamBName"
-            Log.d("FIREBASE", "Saving match data with ID: $matchId")
-
-            // Save match data to Firestore
-            db.collection("matches")
-                .document(matchId)
-                .set(matchData)
-                .addOnSuccessListener {
-                    Log.d("FIREBASE", "Match saved with ID: $matchId")
-                    Toast.makeText(this, "Match Created.", Toast.LENGTH_SHORT).show()
-
-                    // Navigate to MatchTrackingActivity
-                    val intent = Intent(this, MatchTrackingActivity::class.java)
-                    intent.putExtra("matchId", matchId)
-                    startActivity(intent)
-                }
-                .addOnFailureListener { exception ->
-                    Log.w("FIREBASE", "Failed to save match", exception)
-                    Toast.makeText(this, "Failed to save match.", Toast.LENGTH_SHORT).show()
-                }
+            startMatch()
         }
     }
 
-    // Function that creates a Player object and assigns a unique ID
-    private fun createPlayer(name: String, number: Int, team: String): Player {
-        val tempPlayer = Player(
-            id = "",
-            name = name,
-            number = number,
-            team = team
-        )
-        return tempPlayer.copy(id = generatePlayerID(tempPlayer))
+    private fun loadTeams() {
+        db.collection("teams")
+            .get()
+            .addOnSuccessListener { documents ->
+                teams.clear()
+                for (document in documents) {
+                    val teamName = document.getString("name") ?: continue
+                    val playersData = document.get("players") as? List<Map<String, Any>> ?: listOf()
+                    val players = playersData.map {
+                        Player(
+                            id = it["id"] as String,
+                            name = it["name"] as String,
+                            number = (it["number"] as? Long)?.toInt() ?: 0,
+                            team = teamName
+                        )
+                    }.toMutableList()
+
+                    teams.add(Team(name = teamName, players = players))
+                }
+                setupSpinners()
+            }
+            .addOnFailureListener { exception ->
+                Log.w("FIREBASE", "Error getting teams: ", exception)
+                Toast.makeText(this, "Failed to load teams", Toast.LENGTH_SHORT).show()
+            }
     }
 
-    // Helper function to generate a unique player ID
-    private fun generatePlayerID(player: Player): String {
-        return "${player.name}_${player.number}_${player.team}"
+    private fun setupSpinners() {
+        val teamNames = teams.map { it.name }
+
+        val adapter = ArrayAdapter(this, R.layout.simple_spinner_item, teamNames)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        ui.spinnerTeamA.adapter = adapter
+        ui.spinnerTeamB.adapter = adapter
+
+        ui.spinnerTeamA.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View,
+                position: Int,
+                id: Long
+            ) {
+                selectedTeamA = teams[position]
+                updatePlayersUI(teamA = true)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // Do nothing
+            }
+        }
+
+        ui.spinnerTeamB.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View,
+                position: Int,
+                id: Long
+            ) {
+                selectedTeamB = teams[position]
+                updatePlayersUI(teamA = false)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // Do nothing
+            }
+        }
     }
 
-    // DEBUG: Prefill test data for debugging
-    private fun prefillData() {
-        // Create Player objects
-        teamAPlayers.addAll(
-            listOf(
-                createPlayer("Charlie", 11, "Cats"),
-                createPlayer("Alice", 12, "Cats"),
-                createPlayer("Eve", 13, "Cats"),
-                createPlayer("Grace", 14, "Cats")
-            )
-        )
-
-        teamBPlayers.addAll(
-            listOf(
-                createPlayer("Daniel", 41, "Eagles"),
-                createPlayer("Bob", 42, "Eagles"),
-                createPlayer("Frank", 43, "Eagles"),
-                createPlayer("Heidi", 44, "Eagles")
-            )
-        )
-
-        // Set team names manually
-        ui.txtTeamAName.setText("Cats")
-        ui.txtTeamBName.setText("Eagles")
-
-        // Update the team list UI manually
-        ui.lblTeamAPlayers.text = "Dolphins:\n" + teamAPlayers.joinToString("\n") { "${it.name} (#${it.number})" }
-        ui.lblTeamBPlayers.text = "Tigers:\n" + teamBPlayers.joinToString("\n") { "${it.name} (#${it.number})" }
-
-        // Update button text manually
-        ui.btnAddPlayerA.text = "Add Player to Cats"
-        ui.btnAddPlayerB.text = "Add Player to Eagles"
-    }
-
-    // Check if both teams have enough players to start the match
-    private fun checkIfReadyToStart() {
-        if (teamAPlayers.size >= 2 && teamBPlayers.size >= 2) {
-            Log.d("DEBUG", "Both teams have enough players to start the match")
+    private fun updatePlayersUI(teamA: Boolean) {
+        if (teamA) {
+            val playersText =
+                selectedTeamA?.players?.joinToString("\n") { "${it.name} (${it.number})" }
+            ui.txtTeamAPlayers.text = playersText
         } else {
-            Log.d("DEBUG", "Not enough players to start the match")
+            val playersText =
+                selectedTeamB?.players?.joinToString("\n") { "${it.name} (${it.number})" }
+            ui.txtTeamBPlayers.text = playersText
         }
+    }
+
+    private fun startMatch() {
+        if (selectedTeamA == null || selectedTeamB == null) {
+            Toast.makeText(this, "You must select two teams", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val teamAName = selectedTeamA!!.name
+        val teamBName = selectedTeamB!!.name
+
+        if (teamAName == teamBName) {
+            Toast.makeText(this, "You must select two different teams", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val matchId = "${teamAName} vs ${teamBName}"
+        val timestamp = Timestamp.now()
+
+        val allPlayers = selectedTeamA!!.players + selectedTeamB!!.players
+        val playerStats = mutableMapOf<String, Any>()
+        allPlayers.forEach { player ->
+            playerStats[player.id] = player
+        }
+
+        val matchData = hashMapOf(
+            "teamAName" to teamAName,
+            "teamBName" to teamBName,
+            "startedAt" to timestamp,
+            "score" to mapOf(
+                "teamA" to mapOf(
+                    "goals" to 0,
+                    "behinds" to 0,
+                    "totalScore" to 0),
+                "teamB" to mapOf(
+                    "goals" to 0,
+                    "behinds" to 0,
+                    "totalScore" to 0)),
+                "playerStats" to playerStats
+            )
+
+        db.collection("matches")
+            .document(matchId)
+            .set(matchData)
+            .addOnSuccessListener {
+                Log.d("FIREBASE", "Match $matchId started successfully")
+                Toast.makeText(this, "Match started successfully", Toast.LENGTH_SHORT).show()
+
+                val intent = Intent(this, MatchTrackingActivity::class.java)
+                intent.putExtra("matchId", matchId)
+                startActivity(intent)
+                finish()
+            }
+            .addOnFailureListener { exception ->
+                Log.w("FIREBASE", "Error starting match: ", exception)
+                Toast.makeText(this, "Failed to start match", Toast.LENGTH_SHORT).show()
+            }
     }
 }

@@ -6,83 +6,71 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <EditText
-            android:id="@+id/txtTeamAName"
+        <!-- Title -->
+        <TextView
+            android:id="@+id/txtTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Team A Name" />
+            android:text="Create New Match"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
 
-        <EditText
-            android:id="@+id/txtPlayerAName"
+        <!-- Team A -->
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Player A Name" />
+            android:text="Select Team A"
+            android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/txtPlayerANumber"
+        <Spinner
+            android:id="@+id/spinnerTeamA"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Team A Number" />
-
-        <Button
-            android:id="@+id/btnAddPlayerA"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Player to Team A" />
+            android:layout_marginBottom="8dp" />
 
         <TextView
-            android:id="@+id/lblTeamAPlayers"
+            android:id="@+id/txtTeamAPlayers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Team A Players:"
-            android:textStyle="bold"
-            android:paddingTop="12dp" />
+            android:text="Players will appear here..."
+            android:padding="8dp"
+            android:background="#EEEEEE"
+            android:layout_marginBottom="16dp" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="24dp" />
-
-        <EditText
-            android:id="@+id/txtTeamBName"
+        <!-- Team B -->
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Team B Name" />
+            android:text="Select Team B"
+            android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/txtPlayerBName"
+        <Spinner
+            android:id="@+id/spinnerTeamB"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Player B Name" />
-
-        <EditText
-            android:id="@+id/txtPlayerBNumber"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Team B Number" />
-
-        <Button
-            android:id="@+id/btnAddPlayerB"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Player to Team B" />
+            android:layout_marginBottom="8dp" />
 
         <TextView
-            android:id="@+id/lblTeamBPlayers"
+            android:id="@+id/txtTeamBPlayers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Team B Players:"
-            android:textStyle="bold"
-            android:paddingTop="12dp" />
+            android:text="Players will appear here..."
+            android:padding="8dp"
+            android:background="#EEEEEE"
+            android:layout_marginBottom="16dp" />
 
+        <!-- Start Match Button -->
         <Button
             android:id="@+id/btnStartMatch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
             android:text="Start Match"
-            android:textStyle="bold" />
-
+            android:textStyle="bold"
+            android:layout_marginTop="16dp" />
     </LinearLayout>
 </ScrollView>
