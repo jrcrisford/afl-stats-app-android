@@ -1,5 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+
+    <!-- Brand colors -->
+    <color name="colourPrimary">#2196F3</color>
+    <color name="colourOnPrimary">#FFFFFF</color>
+
+    <color name="colourSecondary">#FF9800</color>
+    <color name="colourOnSecondary">#000000</color>
+
+    <!-- Background and Surface -->
+    <color name="colourBackground">#F5F5F5</color>
+    <color name="colourSurface">#FFFFFF</color>
+    <color name="colourOnSurface">#121212</color>
+
+    <!-- Errors -->
+    <color name="colourError">#B00020</color>
+
 </resources>

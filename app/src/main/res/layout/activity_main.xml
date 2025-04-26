@@ -1,37 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:orientation="vertical">
+    android:padding="24dp"
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
 
-    <TextView
+    <!-- Title -->
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/lblMainTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome"
-        android:textSize="24sp"
-        android:textStyle="bold"/>
+        android:text="GameDay Tracker"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:layout_marginTop="48dp"
+        android:layout_marginBottom="8dp" />
 
-    <Button
-        android:id="@+id/btnNewMatch"
+    <!-- Subtitle -->
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/lblSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Match"
-        android:layout_marginTop="16dp"/>
+        android:text="An AFL Statistics App"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp" />
 
-    <Button
-        android:id="@+id/btnViewMatchHistory"
-        android:layout_width="wrap_content"
+    <!-- CardView containing buttons -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="View Match History"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="#3c3f41">
 
-    <Button
-        android:id="@+id/btnTeamManagement"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Manage Teams"
-        android:layout_marginTop="16dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:gravity="center_horizontal">
+
+            <!-- Buttons with margin inside -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnNewMatch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Start New Match"
+                android:textSize="22sp"
+                android:layout_marginBottom="16dp"
+                android:minHeight="80dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnViewMatchHistory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="View Match History"
+                android:textSize="22sp"
+                android:layout_marginBottom="16dp"
+                android:minHeight="80dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnTeamManagement"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Edit/Add Teams"
+                android:textSize="22sp"
+                android:minHeight="80dp" />
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
 </LinearLayout>

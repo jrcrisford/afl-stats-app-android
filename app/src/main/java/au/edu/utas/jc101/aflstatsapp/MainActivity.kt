@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatDelegate
 import au.edu.utas.jc101.aflstatsapp.databinding.ActivityMainBinding
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
@@ -17,9 +18,9 @@ class MainActivity : AppCompatActivity()
     override fun onCreate(SavedInstanceState: Bundle?) {
         super.onCreate(SavedInstanceState)
         ui = ActivityMainBinding.inflate(layoutInflater)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         setContentView(ui.root)
 
-        ui.lblMainTitle.text = "Welcome to the AFL Stats App"
         Log.d("NAVIGATION", "Navigated to ActivityMain")
 
         val db = Firebase.firestore
