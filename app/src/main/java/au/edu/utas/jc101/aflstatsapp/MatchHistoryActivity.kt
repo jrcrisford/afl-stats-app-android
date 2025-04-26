@@ -23,6 +23,8 @@ class MatchHistoryActivity : AppCompatActivity() {
     private var selectedMatch: String? = null
     // Stores the currently filtered quarter
     private var selectedQuarter = 0
+    // List of all actions performed
+    private val allActionsList = mutableListOf<Map<String, Any>>()
 
     private var teamAName: String = "Team A"
     private var teamBName: String = "Team B"
@@ -106,6 +108,11 @@ class MatchHistoryActivity : AppCompatActivity() {
                     startActivity(intent)
                 }.show()
             }
+        }
+
+        // Set up share list button
+        ui.btnShareActions.setOnClickListener {
+            shareActionList()
         }
 
         // Setup toggle for action list visibility
@@ -359,6 +366,7 @@ class MatchHistoryActivity : AppCompatActivity() {
      */
     private fun updateActionList() {
         val actionTriples = mutableListOf<Triple<Int, String, String>>() // quarter, sort key, text
+        allActionsList.clear()
 
         // Loop through all players and their action timestamps
         for (player in allPlayers) {
@@ -372,6 +380,17 @@ class MatchHistoryActivity : AppCompatActivity() {
                 val text = "${player.name} #${player.number}: $actionType | Q$quarter @ $quarterTime (game: $timestamp)"
                 val sortKey = "$quarterTime-$timestamp"
                 actionTriples.add(Triple(quarter, sortKey, text))
+
+                allActionsList.add(
+                    mapOf(
+                        "playerName" to player.name,
+                        "playerNumber" to player.number,
+                        "actionType" to actionType,
+                        "quarter" to quarter.toString(),
+                        "timestamp" to timestamp,
+                        "quarterTime" to quarterTime
+                    )
+                )
             }
         }
 
@@ -395,6 +414,59 @@ class MatchHistoryActivity : AppCompatActivity() {
         ui.actionsListView.layoutParams = params
 
         ui.actionsListView.requestLayout()
+    }
+
+    /**
+     * Shares the action list in either plain text or JSON format.
+     */
+    private fun shareActionList() {
+        val option = arrayOf("Share as Plain Text", "Share as JSON")
+
+        val alertBuilder = androidx.appcompat.app.AlertDialog.Builder(this)
+        alertBuilder.setTitle("Choose Format")
+        alertBuilder.setItems(option) { dialog, which ->
+            val shareText = when (which) {
+                0 -> { // Plain text format
+                    allActionsList.joinToString(separator = "\n") { action ->
+                        "${action["playerName"]} #${action["playerNumber"]}: " +
+                                "${action["actionType"]} | Q${action["quarter"]} " +
+                                "@ ${action["quarterTime"]} (game: ${action["timestamp"]})"
+                    }
+                }
+
+                1 -> { // JSON format
+                    allActionsList.joinToString(
+                        prefix = "[", postfix = "]", separator = ",\n"
+                    ) { action ->
+                        """
+                            {
+                                "playerName": "${action["playerName"]}",
+                                "playerNumber": ${action["playerNumber"]},
+                                "actionType": "${action["actionType"]}",
+                                "quarter": ${action["quarter"]},
+                                "timestamp": "${action["timestamp"]}",
+                                "quarterTime": "${action["quarterTime"]}"
+                            }
+                        """.trimIndent()
+                    }
+                }
+                else -> ""
+            }
+
+            val subject = if (which == 0) {
+                "Match Actions (Plain Text)"
+            } else {
+                "Match Actions (JSON)"
+            }
+
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_SUBJECT, subject)
+                putExtra(Intent.EXTRA_TEXT, shareText)
+            }
+            startActivity(Intent.createChooser(shareIntent, "Share Actions via"))
+        }
+        alertBuilder.show()
     }
 
     /**
