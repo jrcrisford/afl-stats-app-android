@@ -21,13 +21,6 @@
         android:layout_marginTop="16dp"/>
 
     <Button
-        android:id="@+id/btnViewStats"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="View Player Stats"
-        android:layout_marginTop="16dp"/>
-
-    <Button
         android:id="@+id/btnViewMatchHistory"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

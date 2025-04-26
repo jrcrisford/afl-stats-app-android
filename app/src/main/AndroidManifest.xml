@@ -23,9 +23,7 @@
         </activity>
         <activity android:name=".NewMatchActivity" />
         <activity android:name=".MatchTrackingActivity" />
-        <activity android:name=".PlayerStatsActivity" />
         <activity android:name=".PlayerComparisonActivity" />
-        <activity android:name=".TeamComparisonActivity" />
         <activity android:name=".MatchHistoryActivity" />
         <activity android:name=".TeamManagementActivity" />
     </application>

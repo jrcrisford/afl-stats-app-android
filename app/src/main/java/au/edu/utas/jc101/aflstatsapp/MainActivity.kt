@@ -25,57 +25,59 @@ class MainActivity : AppCompatActivity()
         val db = Firebase.firestore
         Log.d("FIREBASE", "Firebase connected: ${db.app.name}")
 
-        // JSON import for match COPILOT
-        val inputStream = assets.open("demo_match.json")
-        val jsonStr = inputStream.bufferedReader().use { it.readText() }
-        val jsonObj = JSONObject(jsonStr)
-        val matchId = jsonObj.keys().next()
-        val matchData = jsonObj.getJSONObject(matchId)
+        val debug = false
+        if (debug) {
+            Log.d("DEBUG", "Debug mode is enabled")
 
-        db.collection("matches").document(matchId)
-            .set(matchData.toMap())
-            .addOnSuccessListener {
-                Log.d("UPLOAD", "Match data imported successfully!")
-            }
-            .addOnFailureListener { e ->
-                Log.e("UPLOAD", "Failed to import match data", e)
-            }
+            // JSON import for match COPILOT
+            val inputStream = assets.open("demo_match.json")
+            val jsonStr = inputStream.bufferedReader().use { it.readText() }
+            val jsonObj = JSONObject(jsonStr)
+            val matchId = jsonObj.keys().next()
+            val matchData = jsonObj.getJSONObject(matchId)
 
-        // JSON import for teams COPILOT
-        val teamInputStream = assets.open("demo_teams.json")
-        val teamJsonStr = teamInputStream.bufferedReader().use { it.readText() }
-        val teamJsonObj = JSONObject(teamJsonStr)
-
-        for (teamName in teamJsonObj.keys()) {
-            val teamData = teamJsonObj.getJSONObject(teamName)
-            db.collection("teams").document(teamName)
-                .set(teamData.toMap())
+            db.collection("matches").document(matchId)
+                .set(matchData.toMap())
                 .addOnSuccessListener {
-                    Log.d("UPLOAD", "Team '$teamName' imported successfully!")
+                    Log.d("UPLOAD", "Match data imported successfully!")
                 }
                 .addOnFailureListener { e ->
-                    Log.e("UPLOAD", "Failed to import team '$teamName'", e)
+                    Log.e("UPLOAD", "Failed to import match data", e)
+                }
+
+            // JSON import for teams COPILOT
+            val teamInputStream = assets.open("demo_teams.json")
+            val teamJsonStr = teamInputStream.bufferedReader().use { it.readText() }
+            val teamJsonObj = JSONObject(teamJsonStr)
+
+            for (teamName in teamJsonObj.keys()) {
+                val teamData = teamJsonObj.getJSONObject(teamName)
+                db.collection("teams").document(teamName)
+                    .set(teamData.toMap())
+                    .addOnSuccessListener {
+                        Log.d("UPLOAD", "Team '$teamName' imported successfully!")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("UPLOAD", "Failed to import team '$teamName'", e)
+                    }
+            }
+
+            db.collection("matches").document(matchId)
+                .set(matchData.toMap())
+                .addOnSuccessListener {
+                    Log.d("UPLOAD", "Match data imported successfully!")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("UPLOAD", "Failed to import match data", e)
                 }
         }
 
-        db.collection("matches").document(matchId)
-            .set(matchData.toMap())
-            .addOnSuccessListener {
-                Log.d("UPLOAD", "Match data imported successfully!")
-            }
-            .addOnFailureListener { e ->
-                Log.e("UPLOAD", "Failed to import match data", e)
-            }
+
+
 
         ui.btnNewMatch.setOnClickListener {
             Log.d("DEBUG", "New Match button clicked")
             val intent = Intent(this, NewMatchActivity::class.java)
-            startActivity(intent)
-        }
-
-        ui.btnViewStats.setOnClickListener {
-            Log.d("DEBUG", "View Stats button clicked")
-            val intent = Intent(this, PlayerStatsActivity::class.java)
             startActivity(intent)
         }
 
