@@ -189,7 +189,8 @@ class MatchHistoryActivity : AppCompatActivity() {
                                 goals = (playerDataMap["goals"] as? Long)?.toInt() ?: 0,
                                 behinds = (playerDataMap["behinds"] as? Long)?.toInt() ?: 0,
                                 actionTimestamps = (playerDataMap["actionTimestamps"] as? List<Map<String, String>>)?.toMutableList()
-                                    ?: mutableListOf()
+                                    ?: mutableListOf(),
+                                photoUri = playerDataMap["photoUri"] as? String
                             )
                             allPlayers.add(player)
                         }

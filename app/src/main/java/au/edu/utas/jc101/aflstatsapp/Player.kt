@@ -16,6 +16,7 @@ import java.io.Serializable
  * @property goals Number of goals scored by the player.
  * @property behinds Number of behinds scored by the player.
  * @property actionTimestamps List with timestamps of actions performed by the player.
+ * @property photoUri URI of the player's photo.
  */
 data class Player(
     val id: String,
@@ -28,5 +29,6 @@ data class Player(
     var tackles: Int = 0,
     var goals: Int = 0,
     var behinds: Int = 0,
-    var actionTimestamps: MutableList<Map<String, Any>> = mutableListOf()
+    var actionTimestamps: MutableList<Map<String, Any>> = mutableListOf(),
+    var photoUri: String? = null
 ) : Serializable

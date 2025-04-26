@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity
 import au.edu.utas.jc101.aflstatsapp.databinding.ActivityNewMatchBinding
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlin.jvm.Throws
 
 class NewMatchActivity : AppCompatActivity() {
     private lateinit var ui: ActivityNewMatchBinding
@@ -49,7 +48,8 @@ class NewMatchActivity : AppCompatActivity() {
                             id = it["id"] as String,
                             name = it["name"] as String,
                             number = (it["number"] as? Long)?.toInt() ?: 0,
-                            team = teamName
+                            team = teamName,
+                            photoUri = it["photoUri"] as? String
                         )
                     }.toMutableList()
 
@@ -67,7 +67,7 @@ class NewMatchActivity : AppCompatActivity() {
         val teamNames = teams.map { it.name }
 
         val adapter = ArrayAdapter(this, R.layout.simple_spinner_item, teamNames)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
 
         ui.spinnerTeamA.adapter = adapter
         ui.spinnerTeamB.adapter = adapter
@@ -142,7 +142,13 @@ class NewMatchActivity : AppCompatActivity() {
         val allPlayers = selectedTeamA!!.players + selectedTeamB!!.players
         val playerStats = mutableMapOf<String, Any>()
         allPlayers.forEach { player ->
-            playerStats[player.id] = player
+            playerStats[player.id] = hashMapOf(
+                "id" to player.id,
+                "name" to player.name,
+                "number" to player.number,
+                "team" to player.team,
+                "photoUri" to (if (player.photoUri.isNullOrBlank()) null else player.photoUri)
+            )
         }
 
         val matchData = hashMapOf(

@@ -1,6 +1,7 @@
 package au.edu.utas.jc101.aflstatsapp
 
 import android.R
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -23,6 +24,7 @@ class TeamManagementActivity : AppCompatActivity() {
     private lateinit var playerAdapter: PlayerAdapter
     // Tracks original name for rename operation
     private var originalTeamName: String? = null
+    private var activePlayerDialog: PlayerAddEditDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,14 +77,15 @@ class TeamManagementActivity : AppCompatActivity() {
 
         // Create new player
         ui.btnAddPlayer.setOnClickListener {
-            PlayerAddEditDialog(
+            activePlayerDialog = PlayerAddEditDialog(
                 context = this,
                 player = null,
-                onPlayerSaved = { newPlayer ->
-                    playerList.add(newPlayer)
+                onPlayerSaved = { savedPlayer ->
+                    playerList.add(savedPlayer)
                     sortPlayerList()
                 }
-            ).show()
+            )
+            activePlayerDialog?.show()
         }
 
         // Save Team
@@ -91,7 +94,7 @@ class TeamManagementActivity : AppCompatActivity() {
         }
 
         // DEBUG: Add a debug team
-        val DebugMode = true
+        val DebugMode = false
         if (DebugMode) {
             addDebugTeam()
         }
@@ -114,7 +117,8 @@ class TeamManagementActivity : AppCompatActivity() {
                             id = it["id"] as String ?: "",
                             name = it["name"] as String ?: "",
                             number = (it["number"] as? Long)?.toInt() ?: 0,
-                            team = teamName
+                            team = teamName,
+                            photoUri = it["photoUri"] as? String
                         )
                     }.toMutableList()
 
@@ -192,7 +196,7 @@ class TeamManagementActivity : AppCompatActivity() {
      * @param player The player to edit.
      */
     private fun editPlayer(player: Player) {
-        PlayerAddEditDialog(
+        activePlayerDialog = PlayerAddEditDialog(
             context = this,
             player = player,
             onPlayerSaved = { updatedPlayer ->
@@ -203,7 +207,8 @@ class TeamManagementActivity : AppCompatActivity() {
                     Log.d("DEBUG", "Player ${updatedPlayer.name} updated")
                 }
             }
-        ).show()
+        )
+        activePlayerDialog?.show()
     }
 
     /**
@@ -255,7 +260,8 @@ class TeamManagementActivity : AppCompatActivity() {
                 hashMapOf(
                     "id" to player.id,
                     "name" to player.name,
-                    "number" to player.number
+                    "number" to player.number,
+                    "photoUri" to player.photoUri
                 )
             }
         )
@@ -321,5 +327,11 @@ class TeamManagementActivity : AppCompatActivity() {
             .addOnFailureListener { exception ->
                 Log.e("FIREBASE", "Failed to upload debug team: ", exception)
             }
+    }
+
+    //COPILOT
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        activePlayerDialog?.handleResult(requestCode, resultCode, data)
     }
 }

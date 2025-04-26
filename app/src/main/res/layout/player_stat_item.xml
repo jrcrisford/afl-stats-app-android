@@ -10,41 +10,59 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="12dp">
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:gravity="center_vertical">
 
-        <TextView
-            android:id="@+id/txtPlayerNameNumber"
-            android:layout_width="wrap_content"
+        <!-- Text section (left side) -->
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Player Name (#Number)"
-            android:textStyle="bold"
-            android:textSize="16sp"/>
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/txtDisposals"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Disposals: 0"/>
+            <TextView
+                android:id="@+id/txtPlayerNameNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Player Name (#Number)"
+                android:textStyle="bold"
+                android:textSize="16sp"/>
 
-        <TextView
-            android:id="@+id/txtMarks"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Marks: 0"/>
+            <TextView
+                android:id="@+id/txtDisposals"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Disposals: 0"/>
 
-        <TextView
-            android:id="@+id/txtTackles"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tackles: 0"/>
+            <TextView
+                android:id="@+id/txtMarks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Marks: 0"/>
 
-        <TextView
-            android:id="@+id/txtScore"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Score: 0.0 (0)"/>
+            <TextView
+                android:id="@+id/txtTackles"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tackles: 0"/>
 
+            <TextView
+                android:id="@+id/txtScore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Score: 0.0 (0)"/>
+        </LinearLayout>
+
+        <!-- Image section (right side) -->
+        <ImageView
+            android:id="@+id/imgPlayerPhoto"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginStart="12dp"
+            android:scaleType="centerCrop"
+            android:src="@android:drawable/sym_def_app_icon"
+            android:contentDescription="Player Photo" />
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

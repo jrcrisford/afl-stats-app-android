@@ -189,7 +189,8 @@ class MatchTrackingActivity : AppCompatActivity() {
                                 tackles = (playerDataMap["tackles"] as? Long)?.toInt() ?: 0,
                                 goals = (playerDataMap["goals"] as? Long)?.toInt() ?: 0,
                                 behinds = (playerDataMap["behinds"] as? Long)?.toInt() ?: 0,
-                                actionTimestamps = mutableListOf()
+                                actionTimestamps = mutableListOf(),
+                                photoUri = playerDataMap["photoUri"] as? String
                             )
                             players.add(player)
                             Log.d("DEBUG", "Loaded player: $player")

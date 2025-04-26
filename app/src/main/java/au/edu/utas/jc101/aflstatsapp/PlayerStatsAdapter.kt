@@ -1,8 +1,10 @@
 package au.edu.utas.jc101.aflstatsapp
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
@@ -14,6 +16,7 @@ class PlayerStatsAdapter(private val players: List<Player>) : RecyclerView.Adapt
         val marks: TextView = view.findViewById(R.id.txtMarks)
         val tackles: TextView = view.findViewById(R.id.txtTackles)
         val score: TextView = view.findViewById(R.id.txtScore)
+        val playerPhoto: ImageView = view.findViewById(R.id.imgPlayerPhoto)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerStatViewHolder {
@@ -31,6 +34,12 @@ class PlayerStatsAdapter(private val players: List<Player>) : RecyclerView.Adapt
         holder.marks.text = "Marks: ${player.marks}"
         holder.tackles.text = "Tackles: ${player.tackles}"
         holder.score.text = "Score: ${player.goals}.${player.behinds} (${totalScore})"
+
+        if (!player.photoUri.isNullOrEmpty()) {
+            holder.playerPhoto.setImageURI(Uri.parse(player.photoUri))
+        } else {
+            holder.playerPhoto.setImageResource(android.R.drawable.sym_def_app_icon)
+        }
     }
 
     override fun getItemCount(): Int {
