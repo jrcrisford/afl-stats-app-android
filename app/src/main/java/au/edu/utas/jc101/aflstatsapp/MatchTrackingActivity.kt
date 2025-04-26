@@ -86,6 +86,8 @@ class MatchTrackingActivity : AppCompatActivity() {
                 startQuarter()
             }
         }
+
+        // Button to end the match
         ui.btnEndMatch.setOnClickListener {
             val timestamp = Timestamp.now()
 
@@ -97,11 +99,32 @@ class MatchTrackingActivity : AppCompatActivity() {
                     Log.d("FIREBASE", "Match ended successfully at $timestamp")
                     Toast.makeText(this, "Match ended successfully", Toast.LENGTH_SHORT).show()
 
-                    // Return to the main activity
-                    val intent = Intent(this, MainActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(intent)
-                    finish()
+                    val finalScoreA = teamAGoals * 6 + teamABehinds
+                    val finalScoreB = teamBGoals * 6 + teamBBehinds
+
+                    val winnerMsg = when {
+                        finalScoreA > finalScoreB -> "The $teamAName win!"
+                        finalScoreB > finalScoreA -> "The $teamBName win!"
+                        else -> "It's a draw!"
+                    }
+
+                    val alertBuilder = androidx.appcompat.app.AlertDialog.Builder(this)
+                    alertBuilder.setTitle("Match Finished")
+                    alertBuilder.setMessage(
+                        "Final Score:\n$teamAName: $teamAGoals.$teamABehinds ($finalScoreA)" +
+                                "\n$teamBName: $teamBGoals.$teamBBehinds ($finalScoreB)\n\n$winnerMsg"
+                    )
+                    alertBuilder.setPositiveButton("Continue") { dialog, _ ->
+                        dialog.dismiss()
+
+                        // Return to the main activity
+                        val intent = Intent(this, MainActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(intent)
+                        finish()
+                    }
+                    alertBuilder.setCancelable(false)
+                    alertBuilder.show()
                 }
                 .addOnFailureListener { exception ->
                     Log.e("FIREBASE", "Error ending match", exception)
@@ -278,6 +301,14 @@ class MatchTrackingActivity : AppCompatActivity() {
                     ).show()
                     return
                 }
+                player.goals++
+                if (player.team == teamAName) {
+                    teamAGoals++
+                } else if (player.team == teamBName) {
+                    teamBGoals++
+                }
+                lastAction = "goal"
+                Log.d("DEBUG", "Goal recorded for player: ${player.name}")
             }
             "behind" -> {
                 if (lastAction == "kick" || lastAction == "handball") {
