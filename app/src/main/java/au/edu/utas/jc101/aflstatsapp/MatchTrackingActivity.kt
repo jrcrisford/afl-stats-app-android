@@ -1,12 +1,14 @@
 package au.edu.utas.jc101.aflstatsapp
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import au.edu.utas.jc101.aflstatsapp.databinding.ActivityMatchTrackingBinding
@@ -26,6 +28,7 @@ class MatchTrackingActivity : AppCompatActivity() {
     private var lastAction: String? = "No previous action"
     // Store the player that made the last kick
     private var lastKicker: Player? = null
+
     // Store the match start time
     private var startTime: Long = 0L
     // Store the current quarter of the match
@@ -40,6 +43,7 @@ class MatchTrackingActivity : AppCompatActivity() {
     private val quarterDuration = 20 * 1000L
     // Store the match total time
     private var totalGameTime: Long = 0L
+
     // Score variable for both teams
     private var teamAGoals = 0
     private var teamABehinds = 0
@@ -200,6 +204,7 @@ class MatchTrackingActivity : AppCompatActivity() {
 
                     // Update the score display UI
                     updateScoreDisplay()
+                    updateQuarterlyScore()
 
                     // Update spinner with player names
                     val playerNames = players.map { "${it.name} #${it.number}" }
@@ -359,6 +364,7 @@ class MatchTrackingActivity : AppCompatActivity() {
         Log.d("DEBUG", "Action recorded: $actionType for ${player.name} in Q$currentQuarter at $formattedQuarterTime (game: $formattedGameTime)")
         updateFirestore(player, actionType)
         updateScoreDisplay()
+        updateQuarterlyScore()
     }
 
     /**
@@ -471,4 +477,91 @@ class MatchTrackingActivity : AppCompatActivity() {
 
         ui.txtScore.text = "$teamAName: $teamAScore vs $teamBName: $teamBScore"
     }
+
+    /**
+     * Calculates score values based on goal and behind actions and
+     * updates the quarterly score display in the UI.
+     *
+     * @param actionsByQuarter The actions grouped by quarter.
+     */
+    private fun updateQuarterlyScore() {
+        val quarters = listOf(1, 2, 3, 4)
+        val uiRows = listOf(
+            Triple(ui.txtQ1TeamA, ui.txtQ1Label, ui.txtQ1TeamB),
+            Triple(ui.txtQ2TeamA, ui.txtQ2Label, ui.txtQ2TeamB),
+            Triple(ui.txtQ3TeamA, ui.txtQ3Label, ui.txtQ3TeamB),
+            Triple(ui.txtQFinalTeamA, ui.txtQFinalLabel, ui.txtQFinalTeamB)
+        )
+
+        val actionsByQuarter = mutableMapOf<Int, MutableList<Pair<String, Any>>>()
+
+        for (player in players) {
+            for (action in player.actionTimestamps) {
+                val type = action["action"] ?: continue
+                if (type != "goal" && type != "behind") continue
+                val quarter = (action["quarter"] as? Int) ?: (action["quarter"] as? Long)?.toInt() ?: continue
+                val team = player.team
+                actionsByQuarter.getOrPut(quarter) { mutableListOf() }.add(Pair(team, type))
+            }
+        }
+
+        var cumulativeGoalsA = 0
+        var cumulativeBehindsA = 0
+        var cumulativeGoalsB = 0
+        var cumulativeBehindsB = 0
+
+        for ((index, quarter) in quarters.withIndex()) {
+            val (teamAView, labelView, teamBView) = uiRows[index]
+            labelView.text = if (quarter == 4) "Final" else "Q$quarter"
+
+            if (quarter > currentQuarter) {
+                teamAView.text = "0.0 (0)"
+                teamBView.text = "0.0 (0)"
+                teamAView.setTextColor(Color.WHITE)
+                teamBView.setTextColor(Color.WHITE)
+                continue
+            }
+
+            val actions = actionsByQuarter[quarter] ?: emptyList()
+
+            val goalsA = actions.count { it.first == teamAName && it.second == "goal" }
+            val behindsA = actions.count { it.first == teamAName && it.second == "behind" }
+            val goalsB = actions.count { it.first == teamBName && it.second == "goal" }
+            val behindsB = actions.count { it.first == teamBName && it.second == "behind" }
+
+            cumulativeGoalsA += goalsA
+            cumulativeBehindsA += behindsA
+            cumulativeGoalsB += goalsB
+            cumulativeBehindsB += behindsB
+
+            val totalA = cumulativeGoalsA * 6 + cumulativeBehindsA
+            val totalB = cumulativeGoalsB * 6 + cumulativeBehindsB
+
+            teamAView.text = "$cumulativeGoalsA.$cumulativeBehindsA ($totalA)"
+            teamBView.text = "$cumulativeGoalsB.$cumulativeBehindsB ($totalB)"
+
+            statHighlighting(teamAView, teamBView, totalA, totalB)
+        }
+    }
+
+    /**
+     * Highlights the better team's stat in green and the other team's stat in white.
+     * If both stats are equal, both are highlighted in blue.
+     *
+     * @param view1 The TextView for the first team.
+     * @param view2 The TextView for the second team.
+     * @param stat1 The stat value for the first team.
+     * @param stat2 The stat value for the second team.
+     */
+    private fun statHighlighting(view1: TextView, view2: TextView, stat1: Int, stat2: Int) =
+        if (stat1 > stat2) {
+            view1.setTextColor(Color.GREEN)
+            view2.setTextColor(Color.WHITE)
+        } else if (stat2 > stat1) {
+            view2.setTextColor(Color.GREEN)
+            view1.setTextColor(Color.WHITE)
+        } else {
+            view1.setTextColor(Color.BLUE)
+            view2.setTextColor(Color.BLUE)
+        }
 }

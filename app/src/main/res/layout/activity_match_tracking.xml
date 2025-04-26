@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-             android:layout_height="match_parent">
+    android:layout_height="match_parent">
 
     <!-- Match Score -->
     <TextView
@@ -31,15 +31,152 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Player Selection -->
+    <!-- Quarterly Score Breakdown -->
+    <LinearLayout
+        android:id="@+id/quarterlyScoreSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/txtQuarterTimer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Quarter 1 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/txtQ1TeamA"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.0 (0)"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/txtQ1Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Q1"
+                android:textSize="16sp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp" />
+
+            <TextView
+                android:id="@+id/txtQ1TeamB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.0 (0)"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <!-- Quarter 2 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/txtQ2TeamA"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.0 (0)"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/txtQ2Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Q2"
+                android:textSize="16sp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp" />
+
+            <TextView
+                android:id="@+id/txtQ2TeamB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.0 (0)"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <!-- Quarter 3 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/txtQ3TeamA"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.0 (0)"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/txtQ3Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Q3"
+                android:textSize="16sp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp" />
+
+            <TextView
+                android:id="@+id/txtQ3TeamB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.0 (0)"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <!-- Final Quarter -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/txtQFinalTeamA"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.0 (0)"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/txtQFinalLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Final"
+                android:textSize="16sp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp" />
+
+            <TextView
+                android:id="@+id/txtQFinalTeamB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.0 (0)"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Player Selection Spinner -->
     <Spinner
         android:id="@+id/spinnerPlayers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/txtQuarterTimer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/quarterlyScoreSection"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Action Buttons -->
     <LinearLayout
