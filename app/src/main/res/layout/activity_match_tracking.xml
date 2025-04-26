@@ -1,453 +1,438 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Match Score -->
-    <TextView
-        android:id="@+id/txtTeamAScore"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Team A 0.0 (0)"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/txtVSLabel" />
-
-    <TextView
-        android:id="@+id/txtVSLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="vs"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintTop_toTopOf="@+id/txtTeamAScore"
-        app:layout_constraintStart_toEndOf="@id/txtTeamAScore"
-        app:layout_constraintEnd_toStartOf="@+id/txtTeamBScore" />
-
-    <TextView
-        android:id="@+id/txtTeamBScore"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Team B 0.0 (0)"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintTop_toTopOf="@+id/txtTeamAScore"
-        app:layout_constraintStart_toEndOf="@id/txtVSLabel"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- Quarter Timer -->
-    <TextView
-        android:id="@+id/txtQuarterTimer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Quarter Timer"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/txtVSLabel"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- Quarterly Score Breakdown -->
     <LinearLayout
-        android:id="@+id/quarterlyScoreSection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/txtQuarterTimer"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:padding="16dp">
 
-        <!-- Q1 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/txtQ1TeamA"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0.0 (0)"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/txtQ1Label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Q1"
-                android:textSize="16sp"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp" />
-
-            <TextView
-                android:id="@+id/txtQ1TeamB"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0.0 (0)"
-                android:textSize="16sp" />
-        </LinearLayout>
-
-        <!-- Q2 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/txtQ2TeamA"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0.0 (0)"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/txtQ2Label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Q2"
-                android:textSize="16sp"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp" />
-
-            <TextView
-                android:id="@+id/txtQ2TeamB"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0.0 (0)"
-                android:textSize="16sp" />
-        </LinearLayout>
-
-        <!-- Q3 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/txtQ3TeamA"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0.0 (0)"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/txtQ3Label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Q3"
-                android:textSize="16sp"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp" />
-
-            <TextView
-                android:id="@+id/txtQ3TeamB"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0.0 (0)"
-                android:textSize="16sp" />
-        </LinearLayout>
-
-        <!-- Final -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/txtQFinalTeamA"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0.0 (0)"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/txtQFinalLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Final"
-                android:textSize="16sp"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp" />
-
-            <TextView
-                android:id="@+id/txtQFinalTeamB"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0.0 (0)"
-                android:textSize="16sp" />
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <!-- Team Stats Section -->
-    <LinearLayout
-        android:id="@+id/teamStatsSection"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/quarterlyScoreSection"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <!-- Disposals Row -->
+        <!-- Match Score -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:weightSum="3"
-            android:gravity="center"
-            android:layout_marginBottom="4dp">
+            android:gravity="center">
 
             <TextView
-                android:id="@+id/txtStatLabelDisposals"
-                android:layout_width="0dp"
+                android:id="@+id/txtTeamAScore"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Disposals:"
+                android:text="Team A 0.0 (0)"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtVSLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="vs"
+                android:textSize="18sp"
                 android:textStyle="bold"
-                android:gravity="center"/>
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp" />
 
             <TextView
-                android:id="@+id/txtTeamADisposals"
-                android:layout_width="0dp"
+                android:id="@+id/txtTeamBScore"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="0"
-                android:gravity="center"/>
-
-            <TextView
-                android:id="@+id/txtTeamBDisposals"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="0"
-                android:gravity="center"/>
+                android:text="Team B 0.0 (0)"
+                android:textSize="18sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- Marks Row -->
+        <!-- Quarter Timer -->
+        <TextView
+            android:id="@+id/txtQuarterTimer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quarter Timer"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="12dp" />
+
+        <!-- Quarterly Score Breakdown Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quarterly Score Breakdown"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp" />
+
+        <!-- Quarterly Score Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginTop="8dp">
+
+            <!-- Q1 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txtQ1TeamA"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.0 (0)"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/txtQ1Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Q1"
+                    android:textSize="16sp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp" />
+
+                <TextView
+                    android:id="@+id/txtQ1TeamB"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.0 (0)"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <!-- Q2 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txtQ2TeamA"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.0 (0)"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/txtQ2Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Q2"
+                    android:textSize="16sp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp" />
+
+                <TextView
+                    android:id="@+id/txtQ2TeamB"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.0 (0)"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <!-- Q3 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txtQ3TeamA"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.0 (0)"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/txtQ3Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Q3"
+                    android:textSize="16sp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp" />
+
+                <TextView
+                    android:id="@+id/txtQ3TeamB"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.0 (0)"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <!-- Final -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txtQFinalTeamA"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.0 (0)"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/txtQFinalLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Final"
+                    android:textSize="16sp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp" />
+
+                <TextView
+                    android:id="@+id/txtQFinalTeamB"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.0 (0)"
+                    android:textSize="16sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Team Stats Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Team Stats"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp" />
+
+        <!-- Team Stats Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginTop="8dp">
+
+            <!-- Disposals Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/txtStatLabelDisposals"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Disposals:"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/txtTeamADisposals"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/txtTeamBDisposals"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0"
+                    android:gravity="center"/>
+            </LinearLayout>
+
+            <!-- Marks Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/txtStatLabelMarks"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Marks:"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/txtTeamAMarks"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/txtTeamBMarks"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0"
+                    android:gravity="center"/>
+            </LinearLayout>
+
+            <!-- Tackles Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/txtStatLabelTackles"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Tackles:"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/txtTeamATackles"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/txtTeamBTackles"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0"
+                    android:gravity="center"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Player Stats Title -->
+        <TextView
+            android:id="@+id/txtPlayerStatsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Player Stats"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp" />
+
+        <!-- Player Stats RecyclerView -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/playerStatsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp" />
+
+        <!-- Player Selection Spinner -->
+        <Spinner
+            android:id="@+id/spinnerPlayers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp" />
+
+        <!-- Action Buttons Row 1 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:weightSum="3"
             android:gravity="center"
-            android:layout_marginBottom="4dp">
+            android:layout_marginTop="8dp">
 
-            <TextView
-                android:id="@+id/txtStatLabelMarks"
-                android:layout_width="0dp"
+            <Button
+                android:id="@+id/btnKick"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Marks:"
-                android:textStyle="bold"
-                android:gravity="center"/>
+                android:text="Kick" />
 
-            <TextView
-                android:id="@+id/txtTeamAMarks"
-                android:layout_width="0dp"
+            <Button
+                android:id="@+id/btnHandball"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="0"
-                android:gravity="center"/>
+                android:text="Handball" />
 
-            <TextView
-                android:id="@+id/txtTeamBMarks"
-                android:layout_width="0dp"
+            <Button
+                android:id="@+id/btnMark"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="0"
-                android:gravity="center"/>
+                android:text="Mark" />
         </LinearLayout>
 
-        <!-- Tackles Row -->
+        <!-- Action Buttons Row 2 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:weightSum="3"
             android:gravity="center"
-            android:layout_marginBottom="8dp">
+            android:layout_marginTop="8dp">
 
-            <TextView
-                android:id="@+id/txtStatLabelTackles"
-                android:layout_width="0dp"
+            <Button
+                android:id="@+id/btnTackle"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Tackles:"
-                android:textStyle="bold"
-                android:gravity="center"/>
+                android:text="Tackle" />
 
-            <TextView
-                android:id="@+id/txtTeamATackles"
-                android:layout_width="0dp"
+            <Button
+                android:id="@+id/btnGoal"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="0"
-                android:gravity="center"/>
+                android:text="Goal" />
 
-            <TextView
-                android:id="@+id/txtTeamBTackles"
-                android:layout_width="0dp"
+            <Button
+                android:id="@+id/btnBehind"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="0"
-                android:gravity="center"/>
+                android:text="Behind" />
         </LinearLayout>
+
+        <!-- Selected Player Info -->
+        <TextView
+            android:id="@+id/txtSelectedPlayer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No player selected"
+            android:gravity="center"
+            android:layout_marginTop="16dp" />
+
+        <!-- Quarter Toggle Button -->
+        <Button
+            android:id="@+id/btnQuarterToggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start Quarter"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp" />
+
+        <!-- End Match Button -->
+        <Button
+            android:id="@+id/btnEndMatch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="End Match"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp" />
+
+        <!-- Player Comparison Button -->
+        <Button
+            android:id="@+id/btnPlayerComparison"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Compare Players"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp" />
     </LinearLayout>
-
-    <!-- Player Stats Section -->
-    <TextView
-        android:id="@+id/txtPlayerStatsTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Player Stats"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/teamStatsSection"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/playerStatsRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/txtPlayerStatsTitle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:paddingTop="8dp" />
-
-
-    <!-- Player Selection Spinner -->
-    <Spinner
-        android:id="@+id/spinnerPlayers"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        app:layout_constraintTop_toBottomOf="@id/playerStatsRecyclerView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- Action Buttons -->
-    <LinearLayout
-        android:id="@+id/actionButtons"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/spinnerPlayers"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <Button
-            android:id="@+id/btnKick"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Kick" />
-
-        <Button
-            android:id="@+id/btnHandball"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Handball" />
-
-        <Button
-            android:id="@+id/btnMark"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Mark" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/actionButtons2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/actionButtons"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <Button
-            android:id="@+id/btnTackle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tackle" />
-
-        <Button
-            android:id="@+id/btnGoal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Goal" />
-
-        <Button
-            android:id="@+id/btnBehind"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Behind" />
-    </LinearLayout>
-
-    <!-- Selected Player Info -->
-    <TextView
-        android:id="@+id/txtSelectedPlayer"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="No player selected"
-        android:gravity="center"
-        android:textAlignment="center"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/actionButtons2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <!-- End Quarter Button -->
-    <Button
-        android:id="@+id/btnQuarterToggle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start Quarter"
-        app:layout_constraintTop_toBottomOf="@id/txtSelectedPlayer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <!-- End Match Button -->
-    <Button
-        android:id="@+id/btnEndMatch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="End Match"
-        app:layout_constraintTop_toBottomOf="@+id/btnQuarterToggle"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/btnPlayerComparison"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Compare Players"
-        app:layout_constraintTop_toBottomOf="@+id/btnEndMatch"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

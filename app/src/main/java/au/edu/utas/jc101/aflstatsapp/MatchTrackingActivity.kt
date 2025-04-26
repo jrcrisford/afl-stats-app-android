@@ -206,6 +206,7 @@ class MatchTrackingActivity : AppCompatActivity() {
                     updateScoreDisplay()
                     updateQuarterlyScore()
                     updateTeamStats()
+                    updatePlayerStats()
 
                     // Update spinner with player names
                     val playerNames = players.map { "${it.name} #${it.number}" }
@@ -367,6 +368,7 @@ class MatchTrackingActivity : AppCompatActivity() {
         updateScoreDisplay()
         updateQuarterlyScore()
         updateTeamStats()
+        updatePlayerStats()
     }
 
     /**
@@ -588,6 +590,15 @@ class MatchTrackingActivity : AppCompatActivity() {
         statHighlighting(ui.txtTeamAMarks, ui.txtTeamBMarks, marksA, marksB)
         statHighlighting(ui.txtTeamATackles, ui.txtTeamBTackles, tacklesA, tacklesB)
     }
+
+    /**
+     * Updates the player stats displayed in the RecyclerView.
+     */
+    private fun updatePlayerStats() {
+        ui.playerStatsRecyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        ui.playerStatsRecyclerView.adapter = PlayerStatsAdapter(players)
+    }
+
 
     /**
      * Highlights the better team's stat in green and the other team's stat in white.
