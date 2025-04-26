@@ -205,6 +205,7 @@ class MatchTrackingActivity : AppCompatActivity() {
                     // Update the score display UI
                     updateScoreDisplay()
                     updateQuarterlyScore()
+                    updateTeamStats()
 
                     // Update spinner with player names
                     val playerNames = players.map { "${it.name} #${it.number}" }
@@ -365,6 +366,7 @@ class MatchTrackingActivity : AppCompatActivity() {
         updateFirestore(player, actionType)
         updateScoreDisplay()
         updateQuarterlyScore()
+        updateTeamStats()
     }
 
     /**
@@ -472,10 +474,26 @@ class MatchTrackingActivity : AppCompatActivity() {
      * Updates the score display on the UI with the current scores for both teams.
      */
     private fun updateScoreDisplay() {
-        val teamAScore = "$teamAGoals.$teamABehinds (${teamAGoals * 6 + teamABehinds})"
-        val teamBScore = "$teamBGoals.$teamBBehinds (${teamBGoals * 6 + teamBBehinds})"
+        val totalScoreA = teamAGoals * 6 + teamABehinds
+        val totalScoreB = teamBGoals * 6 + teamBBehinds
 
-        ui.txtScore.text = "$teamAName: $teamAScore vs $teamBName: $teamBScore"
+        val teamAScoreText = "$teamAName $teamAGoals.$teamABehinds ($totalScoreA)"
+        val teamBScoreText = "$teamBName $teamBGoals.$teamBBehinds ($totalScoreB)"
+
+        ui.txtTeamAScore.text = teamAScoreText
+        ui.txtTeamBScore.text = teamBScoreText
+        ui.txtVSLabel.text = "VS"
+
+        if (totalScoreA > totalScoreB) {
+            ui.txtTeamAScore.setTextColor(Color.GREEN)
+            ui.txtTeamBScore.setTextColor(Color.WHITE)
+        } else if (totalScoreB > totalScoreA) {
+            ui.txtTeamBScore.setTextColor(Color.GREEN)
+            ui.txtTeamAScore.setTextColor(Color.WHITE)
+        } else {
+            ui.txtTeamAScore.setTextColor(Color.BLUE)
+            ui.txtTeamBScore.setTextColor(Color.BLUE)
+        }
     }
 
     /**
@@ -542,6 +560,33 @@ class MatchTrackingActivity : AppCompatActivity() {
 
             statHighlighting(teamAView, teamBView, totalA, totalB)
         }
+    }
+
+    /**
+     * Updates the team stats display on the UI.
+     */
+    private fun updateTeamStats() {
+        // Calculate full match totals (no quarter filtering for now)
+        val teamAPlayers = players.filter { it.team == teamAName }
+        val teamBPlayers = players.filter { it.team == teamBName }
+
+        val disposalsA = teamAPlayers.sumOf { it.kicks + it.handballs }
+        val disposalsB = teamBPlayers.sumOf { it.kicks + it.handballs }
+        val marksA = teamAPlayers.sumOf { it.marks }
+        val marksB = teamBPlayers.sumOf { it.marks }
+        val tacklesA = teamAPlayers.sumOf { it.tackles }
+        val tacklesB = teamBPlayers.sumOf { it.tackles }
+
+        ui.txtTeamADisposals.text = disposalsA.toString()
+        ui.txtTeamBDisposals.text = disposalsB.toString()
+        ui.txtTeamAMarks.text = marksA.toString()
+        ui.txtTeamBMarks.text = marksB.toString()
+        ui.txtTeamATackles.text = tacklesA.toString()
+        ui.txtTeamBTackles.text = tacklesB.toString()
+
+        statHighlighting(ui.txtTeamADisposals, ui.txtTeamBDisposals, disposalsA, disposalsB)
+        statHighlighting(ui.txtTeamAMarks, ui.txtTeamBMarks, marksA, marksB)
+        statHighlighting(ui.txtTeamATackles, ui.txtTeamBTackles, tacklesA, tacklesB)
     }
 
     /**
