@@ -135,4 +135,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <Button
+        android:id="@+id/btnPlayerComparison"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Compare Players"
+        app:layout_constraintTop_toBottomOf="@+id/btnEndMatch"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

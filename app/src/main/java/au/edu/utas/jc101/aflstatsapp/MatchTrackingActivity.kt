@@ -87,6 +87,23 @@ class MatchTrackingActivity : AppCompatActivity() {
             }
         }
 
+        // Button to compare two players
+        ui.btnPlayerComparison.setOnClickListener {
+            if (players.size >= 2) {
+                PlayerSelectionDialog(
+                    context = this,
+                    players = players
+                ) { player1, player2 ->
+                    val intent = Intent(this, PlayerComparisonActivity::class.java)
+                    intent.putExtra("player1", player1)
+                    intent.putExtra("player2", player2)
+                    startActivity(intent)
+                }.show()
+            } else {
+                Toast.makeText(this, "Not enough players to compare", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         // Button to end the match
         ui.btnEndMatch.setOnClickListener {
             val timestamp = Timestamp.now()
