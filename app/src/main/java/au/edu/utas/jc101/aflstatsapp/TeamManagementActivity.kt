@@ -118,8 +118,8 @@ class TeamManagementActivity : AppCompatActivity() {
                     val playersData = document.get("players") as? List<Map<String, Any>> ?: listOf()
                     val players = playersData.map {
                         Player(
-                            id = it["id"] as String ?: "",
-                            name = it["name"] as String ?: "",
+                            id = it["id"] as String,
+                            name = it["name"] as String,
                             number = (it["number"] as? Long)?.toInt() ?: 0,
                             team = teamName,
                             photoUri = it["photoUri"] as? String
@@ -130,7 +130,7 @@ class TeamManagementActivity : AppCompatActivity() {
                 }
                 updateTeamSpinner()
             }
-            .addOnFailureListener() { exception ->
+            .addOnFailureListener { exception ->
                 Log.e("FIREBASE", "Failed to load teams: ", exception)
             }
     }
@@ -299,7 +299,7 @@ class TeamManagementActivity : AppCompatActivity() {
                 loadTeams()
                 originalTeamName = teamName
             }
-            .addOnFailureListener() { exception ->
+            .addOnFailureListener { exception ->
                 Log.e("FIREBASE", "Failed to save team: ", exception)
             }
     }

@@ -125,6 +125,13 @@ class NewMatchActivity : AppCompatActivity() {
                 "name" to player.name,
                 "number" to player.number,
                 "team" to player.team,
+                "kicks" to 0,
+                "handballs" to 0,
+                "marks" to 0,
+                "tackles" to 0,
+                "goals" to 0,
+                "behinds" to 0,
+                "actionTimestamps" to listOf<Map<String, Any>>(),
                 "photoUri" to (if (player.photoUri.isNullOrBlank()) null else player.photoUri)
             )
         }

@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -32,6 +31,7 @@ class MatchHistoryActivity : AppCompatActivity() {
     private var teamAName: String = "Team A"
     private var teamBName: String = "Team B"
     private var allPlayers = mutableListOf<Player>()
+    private var mvpPlayerID: String? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -217,6 +217,20 @@ class MatchHistoryActivity : AppCompatActivity() {
                     updateTeamStats()
                     updatePlayerStats()
                     updateActionList()
+
+                    var highestScore = -1
+                    var bestPlayer: Player? = null
+
+                    for (player in allPlayers) {
+                        val playerScore = player.goals * 6 + player.behinds
+                        if (playerScore > highestScore) {
+                            highestScore = playerScore
+                            bestPlayer = player
+                        }
+                    }
+
+                    mvpPlayerID = bestPlayer?.id
+                    ui.playerStatsRecyclerView.adapter = PlayerStatsAdapter(allPlayers, mvpPlayerID)
                 } else {
                     Log.w("FIRESTORE", "No such match document")
                 }
@@ -356,7 +370,7 @@ class MatchHistoryActivity : AppCompatActivity() {
     private fun updatePlayerStats() {
         ui.playerStatsRecyclerView.layoutManager =
             androidx.recyclerview.widget.LinearLayoutManager(this)
-        ui.playerStatsRecyclerView.adapter = PlayerStatsAdapter(allPlayers)
+        ui.playerStatsRecyclerView.adapter = PlayerStatsAdapter(allPlayers, mvpPlayerID)
     }
 
     /**

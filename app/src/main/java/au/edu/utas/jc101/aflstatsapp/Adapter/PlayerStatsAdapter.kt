@@ -1,5 +1,6 @@
 package au.edu.utas.jc101.aflstatsapp
 
+import android.graphics.Color
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class PlayerStatsAdapter(private val players: List<Player>) : RecyclerView.Adapter<PlayerStatsAdapter.PlayerStatViewHolder>() {
+class PlayerStatsAdapter(private val players: List<Player>, private val mvpPlayerId: String?) : RecyclerView.Adapter<PlayerStatsAdapter.PlayerStatViewHolder>() {
 
     class PlayerStatViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val playerName: TextView = view.findViewById(R.id.txtPlayerNameNumber)
@@ -39,6 +40,13 @@ class PlayerStatsAdapter(private val players: List<Player>) : RecyclerView.Adapt
             holder.playerPhoto.setImageURI(Uri.parse(player.photoUri))
         } else {
             holder.playerPhoto.setImageResource(android.R.drawable.sym_def_app_icon)
+        }
+
+        if (player.id == mvpPlayerId) {
+            holder.playerName.setTextColor(Color.parseColor("#FFD700"))
+            holder.playerName.text = "⭐ MVP: ${player.name} (#${player.number})"
+        } else {
+            holder.playerName.setTextColor(Color.BLACK)
         }
     }
 

@@ -50,6 +50,7 @@ class MatchTrackingActivity : AppCompatActivity() {
     private var teamBBehinds = 0
     private var teamAName: String = ""
     private var teamBName: String = ""
+    private var mvpPlayerID: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -228,7 +229,7 @@ class MatchTrackingActivity : AppCompatActivity() {
                         }
                     }
 
-                    // Load inital team scores
+                    // Load initial team scores
                     teamAGoals = ((scoreData?.get("teamA") as? Map<*, *>)?.get("goals") as? Long)?.toInt() ?: 0
                     teamABehinds = ((scoreData?.get("teamA") as? Map<*, *>)?.get("behinds") as? Long)?.toInt() ?: 0
                     teamBGoals = ((scoreData?.get("teamB") as? Map<*, *>)?.get("goals") as? Long)?.toInt() ?: 0
@@ -386,6 +387,7 @@ class MatchTrackingActivity : AppCompatActivity() {
         Log.d("DEBUG", "Action recorded: $actionType for ${player.name} in Q$currentQuarter at $formattedQuarterTime (game: $formattedGameTime)")
         updateFirestore(player, actionType)
         updateScoreDisplay()
+        calculateMVP()
         updateQuarterlyScore()
         updateTeamStats()
         updatePlayerStats()
@@ -475,21 +477,17 @@ class MatchTrackingActivity : AppCompatActivity() {
 
         Log.d("DEBUG", "Quarter $currentQuarter ended")
 
-        ui.btnQuarterToggle.text = if (currentQuarter < 4) {
-            "Start Quarter ${currentQuarter + 1}"
-        } else {
-            "Match Complete"
-        }
-        ui.btnQuarterToggle.setTextColor(Color.parseColor("#CCCCCC"))
-
-        ui.txtQuarterTimer.text = "Q$currentQuarter ended"
-
-        // Increment the quarter number if not Q4
         if (currentQuarter < 4) {
             currentQuarter++
+            ui.btnQuarterToggle.text = "Start Quarter $currentQuarter"
+            ui.btnQuarterToggle.setTextColor(Color.WHITE)
         } else {
+            ui.btnQuarterToggle.text = "Match Complete"
+            ui.btnQuarterToggle.setTextColor(Color.parseColor("#CCCCCC"))
             ui.btnQuarterToggle.isEnabled = false
         }
+
+        ui.txtQuarterTimer.text = "Q$currentQuarter ended"
     }
 
     /**
@@ -617,7 +615,23 @@ class MatchTrackingActivity : AppCompatActivity() {
      */
     private fun updatePlayerStats() {
         ui.playerStatsRecyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
-        ui.playerStatsRecyclerView.adapter = PlayerStatsAdapter(players)
+        ui.playerStatsRecyclerView.adapter = PlayerStatsAdapter(players, mvpPlayerID)
+    }
+
+    private fun calculateMVP() {
+        var highestScore = -1
+        var bestPlayer: Player? = null
+
+        for (player in players) {
+            val playerScore = (player.goals * 6) + player.behinds
+            if (playerScore > highestScore) {
+                highestScore = playerScore
+                bestPlayer = player
+            }
+        }
+
+        mvpPlayerID = bestPlayer?.id
+        Log.d("DEBUG", "MVP Player: ${bestPlayer?.name} with score: $highestScore")
     }
 
 
