@@ -30,9 +30,9 @@ class PlayerStatsAdapter(private val players: List<Player>) : RecyclerView.Adapt
         val totalScore = player.goals * 6 + player.behinds
 
         holder.playerName.text = "${player.name} (${player.number})"
-        holder.disposals.text = "Disposals: $disposals"
-        holder.marks.text = "Marks: ${player.marks}"
-        holder.tackles.text = "Tackles: ${player.tackles}"
+        holder.disposals.text = "Disp: $disposals"
+        holder.marks.text = "Mark: ${player.marks}"
+        holder.tackles.text = "Tackle: ${player.tackles}"
         holder.score.text = "Score: ${player.goals}.${player.behinds} (${totalScore})"
 
         if (!player.photoUri.isNullOrEmpty()) {
