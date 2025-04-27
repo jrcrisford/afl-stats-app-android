@@ -151,7 +151,6 @@ class NewMatchActivity : AppCompatActivity() {
             .set(matchData)
             .addOnSuccessListener {
                 Log.d("FIREBASE", "Match $matchId started successfully")
-                Toast.makeText(this, "Match started successfully", Toast.LENGTH_SHORT).show()
 
                 val intent = Intent(this, MatchTrackingActivity::class.java)
                 intent.putExtra("matchId", matchId)

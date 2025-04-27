@@ -104,54 +104,85 @@ class MatchTrackingActivity : AppCompatActivity() {
                     startActivity(intent)
                 }.show()
             } else {
-                Toast.makeText(this, "Not enough players to compare", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Warning: Select at least two players to compare", Toast.LENGTH_SHORT).show()
             }
         }
 
         // Button to end the match
         ui.btnEndMatch.setOnClickListener {
-            val timestamp = Timestamp.now()
+            val confirmDialog = androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Confirm End Match")
+                .setMessage("Are you sure you want to end the match? This action cannot be undone.")
+                .setPositiveButton("End Match") { _, _ ->
+                    val timestamp = Timestamp.now()
 
-            // Update the match document in Firestore to set the end time
-            db.collection("matches")
-                .document(matchId)
-                .update("endedAt", timestamp)
-                .addOnSuccessListener {
-                    Log.d("FIREBASE", "Match ended successfully at $timestamp")
-                    Toast.makeText(this, "Match ended successfully", Toast.LENGTH_SHORT).show()
+                    // Update the match document in Firestore to set the end time
+                    db.collection("matches")
+                        .document(matchId)
+                        .update("endedAt", timestamp)
+                        .addOnSuccessListener {
+                            Log.d("FIREBASE", "Match ended successfully at $timestamp")
 
-                    val finalScoreA = teamAGoals * 6 + teamABehinds
-                    val finalScoreB = teamBGoals * 6 + teamBBehinds
+                            val finalScoreA = teamAGoals * 6 + teamABehinds
+                            val finalScoreB = teamBGoals * 6 + teamBBehinds
 
-                    val winnerMsg = when {
-                        finalScoreA > finalScoreB -> "The $teamAName win!"
-                        finalScoreB > finalScoreA -> "The $teamBName win!"
-                        else -> "It's a draw!"
-                    }
+                            val winnerMsg = when {
+                                finalScoreA > finalScoreB -> "The $teamAName win!"
+                                finalScoreB > finalScoreA -> "The $teamBName win!"
+                                else -> "It's a draw!"
+                            }
 
-                    val alertBuilder = androidx.appcompat.app.AlertDialog.Builder(this)
-                    alertBuilder.setTitle("Match Finished")
-                    alertBuilder.setMessage(
-                        "Final Score:\n$teamAName: $teamAGoals.$teamABehinds ($finalScoreA)" +
-                                "\n$teamBName: $teamBGoals.$teamBBehinds ($finalScoreB)\n\n$winnerMsg"
-                    )
-                    alertBuilder.setPositiveButton("Continue") { dialog, _ ->
-                        dialog.dismiss()
+                            val alertBuilder = androidx.appcompat.app.AlertDialog.Builder(this)
+                            alertBuilder.setTitle("Match Finished")
+                            alertBuilder.setMessage(
+                                "Final Score:\n$teamAName: $teamAGoals.$teamABehinds ($finalScoreA)" +
+                                        "\n$teamBName: $teamBGoals.$teamBBehinds ($finalScoreB)\n\n$winnerMsg"
+                            )
+                            alertBuilder.setPositiveButton("Continue") { dialog, _ ->
+                                dialog.dismiss()
 
-                        // Return to the main activity
-                        val intent = Intent(this, MainActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                        startActivity(intent)
-                        finish()
-                    }
-                    alertBuilder.setCancelable(false)
-                    alertBuilder.show()
+                                // Return to the main activity
+                                val intent = Intent(this, MainActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                startActivity(intent)
+                                finish()
+                            }
+                            alertBuilder.setCancelable(false)
+                            alertBuilder.show()
+                        }
+                        .addOnFailureListener { exception ->
+                            Log.e("FIREBASE", "Error ending match", exception)
+                            Toast.makeText(this, "Error ending match", Toast.LENGTH_SHORT).show()
+                        }
                 }
-                .addOnFailureListener { exception ->
-                    Log.e("FIREBASE", "Error ending match", exception)
-                    Toast.makeText(this, "Error ending match", Toast.LENGTH_SHORT).show()
+                .setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
                 }
+                .create()
+            confirmDialog.show()
             Log.d("DEBUG", "End Match button clicked")
+        }
+
+        ui.teamStatsContent.visibility = View.GONE
+        var teamStatsExpanded = false
+        ui.teamStatsTitle.setOnClickListener {
+            teamStatsExpanded = !teamStatsExpanded
+            ui.teamStatsContent.visibility = if (teamStatsExpanded) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+        }
+
+        ui.playerStatsContent.visibility = View.GONE
+        var playerStatsExpanded = false
+        ui.playerStatsTitle.setOnClickListener {
+            playerStatsExpanded = !playerStatsExpanded
+            ui.playerStatsContent.visibility = if (playerStatsExpanded) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
         }
     }
 
@@ -213,32 +244,19 @@ class MatchTrackingActivity : AppCompatActivity() {
                     val playerNames = players.map { "${it.name} #${it.number}" }
                     val adapter = ArrayAdapter(
                         this,
-                        android.R.layout.simple_spinner_item,
+                        android.R.layout.simple_spinner_dropdown_item,
                         playerNames
                     )
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                    ui.spinnerPlayers.adapter = adapter
+                    ui.dropdownPlayer.setAdapter(adapter)
 
                     // Set the spinner listener to update the selected player
-                    ui.spinnerPlayers.onItemSelectedListener =
-                        object : AdapterView.OnItemSelectedListener {
-                            override fun onItemSelected(
-                                parent: AdapterView<*>?,
-                                view: View?,
-                                position: Int,
-                                id: Long
-                            ) {
-                                selectedPlayer = players[position]
-                                ui.txtSelectedPlayer.text = "Selected Player: ${selectedPlayer?.name} #${selectedPlayer?.number}"
-                                Log.d("DEBUG", "Selected Player: ${selectedPlayer?.name} #${selectedPlayer?.number}")
-                            }
-
-                            override fun onNothingSelected(parent: AdapterView<*>?) {
-                                selectedPlayer = null
-                                ui.txtSelectedPlayer.text = "No player selected"
-                                Log.d("DEBUG", "No player selected")
-                            }
-                        }
+                    ui.dropdownPlayer.setOnItemClickListener() { parent, view, position, id ->
+                        selectedPlayer = players[position]
+                        Log.d(
+                            "DEBUG",
+                            "Selected player: ${selectedPlayer?.name} #${selectedPlayer?.number}"
+                        )
+                    }
                 } else {
                     Log.w("DEBUG", "Couldn't find match document")
                 }
@@ -261,7 +279,7 @@ class MatchTrackingActivity : AppCompatActivity() {
 
         if (!isQuarterOngoing) {
             Log.w("DEBUG", "Action not allowed: quarter is not active")
-            Toast.makeText(this, "You must start the quarter to record actions", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "You must start the quarter before recording an action", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -408,7 +426,6 @@ class MatchTrackingActivity : AppCompatActivity() {
             .update(mapOf("playerStats.${player.id}" to playerData) + scoreData)
             .addOnSuccessListener {
                 Log.d("FIREBASE", "Action recorded for player: ${player.name}")
-                Toast.makeText(this, "${actionType.replaceFirstChar { it.uppercase() }} recorded for ${player.name}", Toast.LENGTH_SHORT).show()
 
                 // Update the score display UI
                 updateScoreDisplay()
@@ -424,7 +441,6 @@ class MatchTrackingActivity : AppCompatActivity() {
     private fun startQuarter() {
         isQuarterOngoing = true
         quarterStartTime = System.currentTimeMillis()
-        Toast.makeText(this, "Quarter $currentQuarter started", Toast.LENGTH_SHORT).show()
         Log.d("DEBUG", "Quarter $currentQuarter started")
         ui.btnQuarterToggle.text = "End Quarter $currentQuarter"
 
@@ -438,7 +454,10 @@ class MatchTrackingActivity : AppCompatActivity() {
                     String.format("Q$currentQuarter: %02d:%02d", minutes, seconds)
             }
             override fun onFinish() {
-                Toast.makeText(this@MatchTrackingActivity, "Quarter $currentQuarter auto-ended", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@MatchTrackingActivity,
+                    "Quarter $currentQuarter auto-ended, time limit reached",
+                    Toast.LENGTH_SHORT).show()
                 Log.d("DEBUG", "Quarter $currentQuarter auto-ended")
                 endQuarter()
             }
@@ -453,7 +472,6 @@ class MatchTrackingActivity : AppCompatActivity() {
         quarterTimer?.cancel()
         totalGameTime += System.currentTimeMillis() - quarterStartTime
 
-        Toast.makeText(this, "Quarter $currentQuarter ended", Toast.LENGTH_SHORT).show()
         Log.d("DEBUG", "Quarter $currentQuarter ended")
 
         ui.btnQuarterToggle.text = if (currentQuarter < 4) {
@@ -461,6 +479,7 @@ class MatchTrackingActivity : AppCompatActivity() {
         } else {
             "Match Complete"
         }
+        ui.btnQuarterToggle.setTextColor(Color.parseColor("#CCCCCC"))
 
         ui.txtQuarterTimer.text = "Q$currentQuarter ended"
 
@@ -469,7 +488,6 @@ class MatchTrackingActivity : AppCompatActivity() {
             currentQuarter++
         } else {
             ui.btnQuarterToggle.isEnabled = false
-            Toast.makeText(this, "Match is complete", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -485,17 +503,16 @@ class MatchTrackingActivity : AppCompatActivity() {
 
         ui.txtTeamAScore.text = teamAScoreText
         ui.txtTeamBScore.text = teamBScoreText
-        ui.txtVSLabel.text = "VS"
 
         if (totalScoreA > totalScoreB) {
-            ui.txtTeamAScore.setTextColor(Color.GREEN)
+            ui.txtTeamAScore.setTextColor(Color.parseColor("#00FFFF"))
             ui.txtTeamBScore.setTextColor(Color.WHITE)
         } else if (totalScoreB > totalScoreA) {
-            ui.txtTeamBScore.setTextColor(Color.GREEN)
+            ui.txtTeamBScore.setTextColor(Color.parseColor("#00FFFF"))
             ui.txtTeamAScore.setTextColor(Color.WHITE)
         } else {
-            ui.txtTeamAScore.setTextColor(Color.BLUE)
-            ui.txtTeamBScore.setTextColor(Color.BLUE)
+            ui.txtTeamAScore.setTextColor(Color.parseColor("#FFA500"))
+            ui.txtTeamBScore.setTextColor(Color.parseColor("#FFA500"))
         }
     }
 
@@ -612,13 +629,13 @@ class MatchTrackingActivity : AppCompatActivity() {
      */
     private fun statHighlighting(view1: TextView, view2: TextView, stat1: Int, stat2: Int) =
         if (stat1 > stat2) {
-            view1.setTextColor(Color.GREEN)
-            view2.setTextColor(Color.WHITE)
+            view1.setTextColor(Color.parseColor("#00FFFF"))
+            view2.setTextColor(Color.parseColor("#CCCCCC"))
         } else if (stat2 > stat1) {
-            view2.setTextColor(Color.GREEN)
-            view1.setTextColor(Color.WHITE)
+            view2.setTextColor(Color.parseColor("#00FFFF"))
+            view1.setTextColor(Color.parseColor("#CCCCCC"))
         } else {
-            view1.setTextColor(Color.BLUE)
-            view2.setTextColor(Color.BLUE)
+            view1.setTextColor(Color.parseColor("#FFA500"))
+            view2.setTextColor(Color.parseColor("#FFA500"))
         }
 }
