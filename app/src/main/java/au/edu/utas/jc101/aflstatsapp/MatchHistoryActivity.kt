@@ -19,10 +19,13 @@ class MatchHistoryActivity : AppCompatActivity() {
 
     // List of matches from Firestore
     private val matchList = mutableListOf<String>()
+
     // Stores the currently selected match ID
     private var selectedMatch: String? = null
+
     // Stores the currently filtered quarter
     private var selectedQuarter = 0
+
     // List of all actions performed
     private val allActionsList = mutableListOf<Map<String, Any>>()
 
@@ -41,55 +44,51 @@ class MatchHistoryActivity : AppCompatActivity() {
         db = FirebaseFirestore.getInstance()
 
         // Set up match selection spinner
-        val matchAdapter = ArrayAdapter(this, R.layout.simple_spinner_item, matchList)
-        matchAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
-        ui.spinnerMatchSelection.adapter = matchAdapter
+        val matchAdapter =
+            ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, matchList)
+        ui.dropdownMatchSelection.setAdapter(matchAdapter)
 
-        // Set up the spinner to show the match list
-        ui.spinnerMatchSelection.onItemSelectedListener =
-            object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>,
-                    view: View,
-                    position: Int,
-                    id: Long
-                ) {
-                    selectedMatch = matchList.getOrNull(position)
-                    if (selectedMatch != null) {
-                        Log.d("MATCH_SELECTION", "Selected match: $selectedMatch")
-                        loadMatchDetails(selectedMatch!!)
-                    }
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>) {
-                    selectedMatch = null
-                }
+        ui.dropdownMatchSelection.setOnItemClickListener { parent, view, position, id ->
+            selectedMatch = matchList.getOrNull(position)
+            if (selectedMatch != null) {
+                Log.d("MATCH_SELECTION", "Selected match: $selectedMatch")
+                loadMatchDetails(selectedMatch!!)
             }
+        }
 
         loadMatchList()
 
+        var teamStatsExpanded = false
+        ui.teamStatsContent.visibility = View.GONE
+
+        ui.teamStatsTitle.setOnClickListener {
+            teamStatsExpanded = !teamStatsExpanded
+            ui.teamStatsContent.visibility = if (teamStatsExpanded) View.VISIBLE else View.GONE
+        }
+
         // Set up the spinner to filter stats by quarters
-        val quarters = listOf("Full Match", "Q1", "Q2", "Q3", "Q4")
-        val quarterAdapter = ArrayAdapter(this, R.layout.simple_spinner_item, quarters)
-        quarterAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
-        ui.spinnerQuarterFilter.adapter = quarterAdapter
+        val quarterAdapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_dropdown_item_1line,
+            listOf("Full Match", "Q1", "Q2", "Q3", "Q4")
+        )
 
-        ui.spinnerQuarterFilter.onItemSelectedListener =
-            object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>,
-                    view: View,
-                    position: Int,
-                    id: Long
-                ) {
-                    selectedQuarter = position
-                    updateTeamStats()
-                }
+        // Set the adapter to the dropdown
+        ui.dropdownQuarterFilter.setAdapter(quarterAdapter)
 
-                override fun onNothingSelected(parent: AdapterView<*>) {
-                    // Do nothing
-                }
-            }
+        // Set the item click listener
+        ui.dropdownQuarterFilter.setOnItemClickListener { parent, view, position, id ->
+            selectedQuarter = position
+            updateTeamStats()
+        }
+
+        var playerStatsExpanded = false
+        ui.playerStatsContent.visibility = View.GONE
+
+        ui.txtPlayerStatsTitle.setOnClickListener {
+            playerStatsExpanded = !playerStatsExpanded
+            ui.playerStatsContent.visibility = if (playerStatsExpanded) View.VISIBLE else View.GONE
+        }
 
         // Set up the button to compare players
         ui.btnComparePlayers.setOnClickListener {
@@ -111,24 +110,16 @@ class MatchHistoryActivity : AppCompatActivity() {
         }
 
         // Set up share list button
-        ui.btnShareActions.setOnClickListener {
-            shareActionList()
+        ui.actionsListView.visibility = View.GONE
+        var actionsExpanded = false
+
+        ui.txtActionsTitle.setOnClickListener {
+            actionsExpanded = !actionsExpanded
+            ui.actionsListView.visibility = if (actionsExpanded) View.VISIBLE else View.GONE
         }
 
-        // Setup toggle for action list visibility
-        var actionsCollapsed = true
-        ui.actionsListView.visibility = View.GONE
-        ui.btnToggleActions.text = "Show Actions"
-
-        ui.btnToggleActions.setOnClickListener {
-            if (!actionsCollapsed) {
-                ui.actionsListView.visibility = View.GONE
-                ui.btnToggleActions.text = "Show Actions"
-            } else {
-                ui.actionsListView.visibility = View.VISIBLE
-                ui.btnToggleActions.text = "Hide Actions"
-            }
-            actionsCollapsed = !actionsCollapsed
+        ui.btnShareActions.setOnClickListener {
+            shareActionList()
         }
     }
 
@@ -143,7 +134,9 @@ class MatchHistoryActivity : AppCompatActivity() {
                 for (document in documents) {
                     matchList.add(document.id)
                 }
-                (ui.spinnerMatchSelection.adapter as ArrayAdapter<*>).notifyDataSetChanged()
+                val matchAdapter =
+                    ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, matchList)
+                ui.dropdownMatchSelection.setAdapter(matchAdapter)
                 Log.d("FIRESTORE", "Match list loaded: $matchList")
             }
             .addOnFailureListener { exception ->
@@ -199,7 +192,7 @@ class MatchHistoryActivity : AppCompatActivity() {
                     Log.d("DEBUG", "Loaded ${allPlayers.size} players for match $matchId")
 
                     // Collect actions per quarter
-                    val actionsByQuarter =  mutableMapOf<Int, MutableList<Pair<String, Any>>>()
+                    val actionsByQuarter = mutableMapOf<Int, MutableList<Pair<String, Any>>>()
 
                     // Loop through all players and their action timestamps and find which quarter each action occurred in
                     for (player in allPlayers) {
@@ -239,22 +232,24 @@ class MatchHistoryActivity : AppCompatActivity() {
      */
     private fun updateTeamStats() {
         // Update the team names in the UI
-        val finalScoreA = allPlayers.filter { it.team == teamAName }.sumOf { it.goals * 6 + it.behinds }
-        val finalScoreB = allPlayers.filter { it.team == teamBName }.sumOf { it.goals * 6 + it.behinds }
+        val finalScoreA =
+            allPlayers.filter { it.team == teamAName }.sumOf { it.goals * 6 + it.behinds }
+        val finalScoreB =
+            allPlayers.filter { it.team == teamBName }.sumOf { it.goals * 6 + it.behinds }
 
         ui.txtTeamAName.text = teamAName
         ui.txtTeamBName.text = teamBName
 
         // Apply color to highlight the winning team
         if (finalScoreA > finalScoreB) {
-            ui.txtTeamAName.setTextColor(Color.GREEN)
+            ui.txtTeamAName.setTextColor(Color.parseColor("#00FFFF"))
             ui.txtTeamBName.setTextColor(Color.WHITE)
         } else if (finalScoreB > finalScoreA) {
             ui.txtTeamAName.setTextColor(Color.WHITE)
-            ui.txtTeamBName.setTextColor(Color.GREEN)
+            ui.txtTeamBName.setTextColor(Color.parseColor("#00FFFF"))
         } else {
-            ui.txtTeamAName.setTextColor(Color.BLUE)
-            ui.txtTeamBName.setTextColor(Color.BLUE)
+            ui.txtTeamAName.setTextColor(Color.parseColor("#FFA500"))
+            ui.txtTeamBName.setTextColor(Color.parseColor("#FFA500"))
         }
 
         val filteredPlayers = if (selectedQuarter == 0) {
@@ -357,7 +352,8 @@ class MatchHistoryActivity : AppCompatActivity() {
      * Updates the player stats displayed in the RecyclerView.
      */
     private fun updatePlayerStats() {
-        ui.playerStatsRecyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        ui.playerStatsRecyclerView.layoutManager =
+            androidx.recyclerview.widget.LinearLayoutManager(this)
         ui.playerStatsRecyclerView.adapter = PlayerStatsAdapter(allPlayers)
     }
 
@@ -378,7 +374,8 @@ class MatchHistoryActivity : AppCompatActivity() {
                 val quarterTime = action["quarterTime"] as? String ?: "Unknown quarter time"
                 val quarter = (action["quarter"] as? Long)?.toInt() ?: -1
 
-                val text = "${player.name} #${player.number}: $actionType | Q$quarter @ $quarterTime (game: $timestamp)"
+                val text =
+                    "${player.name} #${player.number}: $actionType | Q$quarter @ $quarterTime (game: $timestamp)"
                 val sortKey = "$quarterTime-$timestamp"
                 actionTriples.add(Triple(quarter, sortKey, text))
 
@@ -451,6 +448,7 @@ class MatchHistoryActivity : AppCompatActivity() {
                         """.trimIndent()
                     }
                 }
+
                 else -> ""
             }
 
@@ -481,14 +479,14 @@ class MatchHistoryActivity : AppCompatActivity() {
      */
     private fun statHighlighting(view1: TextView, view2: TextView, stat1: Int, stat2: Int) =
         if (stat1 > stat2) {
-            view1.setTextColor(Color.GREEN)
-            view2.setTextColor(Color.WHITE)
+            view1.setTextColor(Color.parseColor("#00FFFF"))
+            view2.setTextColor(Color.parseColor("#CCCCCC"))
         } else if (stat2 > stat1) {
-            view2.setTextColor(Color.GREEN)
-            view1.setTextColor(Color.WHITE)
+            view2.setTextColor(Color.parseColor("#00FFFF"))
+            view1.setTextColor(Color.parseColor("#CCCCCC"))
         } else {
-            view1.setTextColor(Color.BLUE)
-            view2.setTextColor(Color.BLUE)
+            view1.setTextColor(Color.parseColor("#FFA500"))
+            view2.setTextColor(Color.parseColor("#FFA500"))
         }
 
     /**

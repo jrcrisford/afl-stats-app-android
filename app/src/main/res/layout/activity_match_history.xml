@@ -1,431 +1,587 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colourBackground"
     android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="20dp">
 
-        <!-- Title -->
-        <TextView
-            android:id="@+id/txtMatchHistoryTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Match History"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="16dp" />
-
-        <!-- Match Selection Spinner -->
-        <Spinner
-            android:id="@+id/spinnerMatchSelection"
+        <!-- Match History Title + Match Selection + Match Overview Card -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp" />
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#3c3f41"
+            android:layout_marginBottom="16dp">
 
-        <!-- Match Name -->
-        <LinearLayout
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/txtTeamAName"
-                android:text="Team A"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginEnd="8dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:text="VS"
-                android:textSize="18sp"
-                android:layout_marginEnd="8dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/txtTeamBName"
-                android:text="Team B"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-
-        <!-- Team Stats Comparison Table -->
-        <LinearLayout
-            android:id="@+id/layoutTeamStats"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="8dp" >
-
-            <!-- Team Stats Title -->
-            <TextView
-                android:id="@+id/txtTeamStatsTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Team Stats"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp"
-                android:gravity="center" />
-
-            <Spinner
-                android:id="@+id/spinnerQuarterFilter"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                />
-
-            <!-- Stat Rows (one each stat) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="3"
-                android:layout_marginBottom="4dp">
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:gravity="center_horizontal">
 
-                <TextView
-                    android:id="@+id/txtStatLabelDisposals"
-                    android:layout_width="0dp"
+                <!-- Match History Title -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/txtMatchHistoryTitle"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Disposals:"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/txtTeamADisposals"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="0" />
-
-                <TextView
-                    android:id="@+id/txtTeamBDisposals"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="0" />
-            </LinearLayout>
-
-            <!-- Marks Row -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="3"
-                android:layout_marginBottom="4dp">
-
-                <TextView
-                    android:id="@+id/txtStatLabelMarks"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Marks:"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/txtTeamAMarks"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="0" />
-
-                <TextView
-                    android:id="@+id/txtTeamBMarks"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="0" />
-            </LinearLayout>
-
-            <!-- Tackles Row -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="3"
-                android:layout_marginBottom="4dp">
-
-                <TextView
-                    android:id="@+id/txtStatLabelTackles"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Tackles:"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/txtTeamATackles"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="0" />
-
-                <TextView
-                    android:id="@+id/txtTeamBTackles"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="0" />
-            </LinearLayout>
-
-            <!-- Score row -->
-        </LinearLayout>
-
-        <!-- Quarterly Score Breakdown -->
-        <LinearLayout
-            android:id="@+id/layoutQuarterlyScores"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="16dp"
-            android:padding="8dp">
-
-            <!-- Title -->
-            <TextView
-                android:id="@+id/txtQuarterlyBreakdownTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Quarterly Score Breakdown"
-                android:textStyle="bold"
-                android:textSize="20sp"
-                android:gravity="center"
-                android:layout_marginBottom="8dp" />
-
-            <!-- Header Row -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="3"
-                android:layout_marginBottom="4dp">
-
-                <TextView
-                    android:id="@+id/txtHeadingTeamA"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Team A"
+                    android:text="Match History"
+                    android:textSize="24sp"
+                    android:textColor="@android:color/white"
                     android:textStyle="bold"
-                    android:gravity="center" />
+                    android:layout_marginBottom="6dp"/>
 
-                <TextView
-                    android:id="@+id/txtHeadingQuarter"
-                    android:layout_width="0dp"
+                <!-- Match Selection Dropdown -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Quarter"
+                    android:hint="Select Match"
+                    app:endIconMode="dropdown_menu"
+                    app:endIconTint="@android:color/white"
+                    app:hintTextColor="@android:color/white"
+                    android:textColorHint="@android:color/white"
+                    app:boxBackgroundColor="#505050"
+                    app:boxStrokeColor="#FFFFFF"
+                    android:layout_marginBottom="10dp">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/dropdownMatchSelection"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:focusable="false"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp"
+                        android:gravity="center_vertical|start"
+                        android:paddingStart="16dp"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Match Teams -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/txtTeamAName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Team A"
+                        android:textColor="@android:color/white"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:layout_marginEnd="8dp"/>
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="vs"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:layout_marginEnd="8dp"/>
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/txtTeamBName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Team B"
+                        android:textColor="@android:color/white"
+                        android:textSize="20sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Quarterly Scores Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#3c3f41"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:gravity="center_horizontal">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/txtQuarterlyBreakdownTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Quarterly Score Breakdown"
+                    android:textColor="@android:color/white"
+                    android:textSize="22sp"
                     android:textStyle="bold"
-                    android:gravity="center" />
+                    android:layout_marginBottom="10dp"/>
 
-                <TextView
-                    android:id="@+id/txtHeadingTeamB"
-                    android:layout_width="0dp"
+                <!-- Q1 Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Team B"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginBottom="6dp">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/txtQ1TeamA"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0.0 (0)"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/txtQ1Label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Q1"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="12dp" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/txtQ1TeamB"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0.0 (0)"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <!-- Q2 Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginBottom="6dp">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/txtQ2TeamA"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0.0 (0)"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/txtQ2Label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Q2"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="12dp" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/txtQ2TeamB"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0.0 (0)"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <!-- Q3 Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginBottom="6dp">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/txtQ3TeamA"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0.0 (0)"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/txtQ3Label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Q3"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="12dp" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/txtQ3TeamB"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0.0 (0)"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <!-- Final Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/txtQFinalTeamA"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0.0 (0)"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/txtQFinalLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Final"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="12dp" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/txtQFinalTeamB"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0.0 (0)"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Team Stats Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#3c3f41"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:gravity="center_horizontal">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/teamStatsTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Team Stats"
+                    android:textSize="22sp"
+                    android:textColor="@android:color/white"
                     android:textStyle="bold"
-                    android:gravity="center" />
-            </LinearLayout>
+                    android:clickable="true"
+                    android:focusable="true"/>
 
-            <!-- Q1 Row -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/teamStatsSubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Press to expand/collapse"
+                    android:textSize="11sp"
+                    android:textColor="#CCCCCC"/>
+
+                <!-- Expandable Content -->
+                <LinearLayout
+                    android:id="@+id/teamStatsContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center">
+
+                    <!-- Quarter Filter -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/textInputLayoutQuarterFilter"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Select Quarter"
+                        app:endIconMode="dropdown_menu"
+                        app:endIconTint="@android:color/white"
+                        app:hintTextColor="@android:color/white"
+                        android:textColorHint="@android:color/white"
+                        app:boxBackgroundColor="#505050"
+                        app:boxStrokeColor="#FFFFFF"
+                        android:layout_marginBottom="10dp">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/dropdownQuarterFilter"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none"
+                            android:focusable="false"
+                            android:textColor="#FFFFFF"
+                            android:textSize="18sp"
+                            android:paddingStart="16dp"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Stat Rows -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:weightSum="3"
+                        android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/txtStatLabelDisposals"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Disposals:"
+                            android:textColor="#FFFFFF"
+                            android:gravity="center"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:id="@+id/txtTeamADisposals"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="0"
+                            android:textColor="#FFFFFF"
+                            android:gravity="center"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:id="@+id/txtTeamBDisposals"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="0"
+                            android:textColor="#FFFFFF"
+                            android:gravity="center"
+                            android:textSize="18sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:weightSum="3"
+                        android:gravity="center"
+                        android:layout_marginTop="6dp">
+
+                        <TextView
+                            android:id="@+id/txtStatLabelMarks"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Marks:"
+                            android:textColor="#FFFFFF"
+                            android:gravity="center"
+                            android:textSize="18sp"/>
+
+                        <TextView
+                            android:id="@+id/txtTeamAMarks"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="0"
+                            android:textColor="#FFFFFF"
+                            android:gravity="center"
+                            android:textSize="18sp"/>
+
+                        <TextView
+                            android:id="@+id/txtTeamBMarks"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="0"
+                            android:textColor="#FFFFFF"
+                            android:gravity="center"
+                            android:textSize="18sp"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:weightSum="3"
+                        android:gravity="center"
+                        android:layout_marginTop="6dp">
+
+                        <TextView
+                            android:id="@+id/txtStatLabelTackles"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Tackles:"
+                            android:textColor="#FFFFFF"
+                            android:gravity="center"
+                            android:textSize="18sp"/>
+
+                        <TextView
+                            android:id="@+id/txtTeamATackles"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="0"
+                            android:textColor="#FFFFFF"
+                            android:gravity="center"
+                            android:textSize="18sp"/>
+
+                        <TextView
+                            android:id="@+id/txtTeamBTackles"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="0"
+                            android:textColor="#FFFFFF"
+                            android:gravity="center"
+                            android:textSize="18sp"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Player Stats Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#3c3f41"
+            android:layout_marginBottom="16dp">
+
             <LinearLayout
-                android:id="@+id/layoutQ1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="3">
+                android:padding="20dp"
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
 
-                <TextView
-                    android:id="@+id/txtQ1TeamA"
-                    android:layout_width="0dp"
+                <!-- Title -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/txtPlayerStatsTitle"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="0.0 (0)" />
+                    android:text="Player Stats &amp; Comparison"
+                    android:textSize="22sp"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true" />
 
-                <TextView
-                    android:id="@+id/txtQ1Label"
-                    android:layout_width="0dp"
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/playerStatsSubtitle"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="Q1"
-                    android:textStyle="bold" />
+                    android:text="Press to expand/collapse"
+                    android:textSize="11sp"
+                    android:textColor="#CCCCCC" />
 
-                <TextView
-                    android:id="@+id/txtQ1TeamB"
-                    android:layout_width="0dp"
+                <!-- Expandable RecyclerView -->
+                <LinearLayout
+                    android:id="@+id/playerStatsContent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="0.0 (0)" />
+                    android:orientation="vertical">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/playerStatsRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="350dp"
+                        android:paddingTop="8dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnComparePlayers"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Compare Players"
+                        android:textSize="18sp"
+                        android:minHeight="52dp"
+                        android:paddingTop="8dp" />
+                </LinearLayout>
             </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-            <!-- Q2 Row -->
+        <!-- Recorded Actions Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#3c3f41"
+            android:layout_marginBottom="24dp">
+
             <LinearLayout
-                android:id="@+id/layoutQ2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="3">
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:gravity="center_horizontal">
 
-                <TextView
-                    android:id="@+id/txtQ2TeamA"
-                    android:layout_width="0dp"
+                <!-- Title -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/txtActionsTitle"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="0.0 (0)" />
+                    android:text="Recorded Actions List"
+                    android:textSize="22sp"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"/>
 
-                <TextView
-                    android:id="@+id/txtQ2Label"
-                    android:layout_width="0dp"
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/actionsListSubtitle"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="Q2"
-                    android:textStyle="bold" />
+                    android:text="Press to expand/collapse"
+                    android:textSize="11sp"
+                    android:textColor="#CCCCCC"
+                    android:layout_marginBottom="16dp"/>
 
-                <TextView
-                    android:id="@+id/txtQ2TeamB"
-                    android:layout_width="0dp"
+                <!-- Toggle and Share Buttons -->
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:orientation="horizontal"
                     android:gravity="center"
-                    android:text="0.0 (0)" />
+                    android:layout_marginBottom="12dp">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnShareActions"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Share List"
+                        android:textSize="18sp"
+                        android:minHeight="52dp"/>
+                </LinearLayout>
+
+                <!-- Actions List -->
+                <ListView
+                    android:id="@+id/actionsListView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:divider="@android:color/darker_gray"
+                    android:dividerHeight="2dp"
+                    android:textAppearance="@style/ListItemTextStyle" />
             </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-            <!-- Q3 Row -->
-            <LinearLayout
-                android:id="@+id/layoutQ3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="3">
 
-                <TextView
-                    android:id="@+id/txtQ3TeamA"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="0.0 (0)" />
-
-                <TextView
-                    android:id="@+id/txtQ3Label"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="Q3"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/txtQ3TeamB"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="0.0 (0)" />
-            </LinearLayout>
-
-            <!-- Q4 Row -->
-            <LinearLayout
-                android:id="@+id/layoutQ4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="3">
-
-                <TextView
-                    android:id="@+id/txtQFinalTeamA"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="0.0 (0)" />
-
-                <TextView
-                    android:id="@+id/txtQFinalLabel"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="Final"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/txtQFinalTeamB"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="0.0 (0)" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- Player Stats Section -->
-        <TextView
-            android:id="@+id/txtPlayerStatsTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Player Stats"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/playerStatsRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="8dp" />
-
-        <Button
-            android:id="@+id/btnComparePlayers"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Compare Players"
-            android:layout_marginTop="16dp" />
-
-        <!-- Actions List -->
-        <TextView
-            android:id="@+id/txtActionsTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Recorded Actions"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp" />
-
-        <Button
-            android:id="@+id/btnToggleActions"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hide Actions"
-            android:layout_marginTop="8dp" />
-
-        <Button
-            android:id="@+id/btnShareActions"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Share Actions" />
-
-        <ListView
-            android:id="@+id/actionsListView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="8dp" />
     </LinearLayout>
-
 </ScrollView>
