@@ -135,7 +135,7 @@ class MatchHistoryActivity : AppCompatActivity() {
                     matchList.add(document.id)
                 }
                 val matchAdapter =
-                    ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, matchList)
+                    ArrayAdapter(this, R.layout.simple_dropdown_item_1line, matchList)
                 ui.dropdownMatchSelection.setAdapter(matchAdapter)
                 Log.d("FIRESTORE", "Match list loaded: $matchList")
             }
@@ -275,6 +275,7 @@ class MatchHistoryActivity : AppCompatActivity() {
             }
         }
 
+        // Much of the below was autocompleted by Copilot
         val teamAPlayers = filteredPlayers.filter { it.team == teamAName }
         val teamBPlayers = filteredPlayers.filter { it.team == teamBName }
 
@@ -315,6 +316,7 @@ class MatchHistoryActivity : AppCompatActivity() {
             Triple(ui.txtQFinalTeamA, ui.txtQFinalLabel, ui.txtQFinalTeamB)
         )
 
+        // Much of the below was autocompleted by Copilot
         var cumulativeGoalsA = 0
         var cumulativeBehindsA = 0
         var cumulativeGoalsB = 0
@@ -418,6 +420,7 @@ class MatchHistoryActivity : AppCompatActivity() {
      * Shares the action list in either plain text or JSON format.
      */
     private fun shareActionList() {
+        // Copilot was instrumental in the creation and debugging of this function
         val option = arrayOf("Share as Plain Text", "Share as JSON")
 
         val alertBuilder = androidx.appcompat.app.AlertDialog.Builder(this)

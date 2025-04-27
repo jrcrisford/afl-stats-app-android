@@ -4,8 +4,6 @@ import android.R
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Toast
@@ -42,6 +40,7 @@ class NewMatchActivity : AppCompatActivity() {
             .addOnSuccessListener { documents ->
                 teams.clear()
                 for (document in documents) {
+                    // Copilot helped debug this
                     val teamName = document.getString("name") ?: continue
                     val playersData = document.get("players") as? List<Map<String, Any>> ?: listOf()
                     val players = playersData.map {
@@ -130,6 +129,7 @@ class NewMatchActivity : AppCompatActivity() {
             )
         }
 
+        // Copilot helped debug these hashmaps
         val matchData = hashMapOf(
             "teamAName" to teamAName,
             "teamBName" to teamBName,

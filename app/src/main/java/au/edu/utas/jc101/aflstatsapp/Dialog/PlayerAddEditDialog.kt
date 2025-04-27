@@ -62,7 +62,7 @@ class PlayerAddEditDialog (
             .setTitle(if (player == null) "Add Player" else "Edit Player")
             .create()
 
-        // Set up the save button
+        // Set up the save button (a lot of the save logic was written with help from Copilot)
         btnSave.setOnClickListener {
             val name = edtName.text.toString().trim()
             val numberText = edtNumber.text.toString().trim()
@@ -157,6 +157,7 @@ class PlayerAddEditDialog (
         }
     }
 
+    // This bitmap method was suggested by Copilot, written by myself, and debugged together with copilot
     private fun saveBitmap(bitmap: Bitmap): Uri? {
         val path = MediaStore.Images.Media.insertImage(
             context.contentResolver,

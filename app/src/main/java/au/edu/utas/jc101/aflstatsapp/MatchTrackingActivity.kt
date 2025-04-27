@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
 import android.view.View
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
@@ -76,7 +75,7 @@ class MatchTrackingActivity : AppCompatActivity() {
         // Update the quarter toggle with the current quarter
         ui.btnQuarterToggle.text = "Start Quarter $currentQuarter"
 
-        // Set action and end button listeners
+        // Set action and end button listeners (some were auto completed by Copilot)
         ui.btnKick.setOnClickListener { recordAction("kick") }
         ui.btnHandball.setOnClickListener { recordAction("handball") }
         ui.btnMark.setOnClickListener { recordAction("mark") }
@@ -163,6 +162,7 @@ class MatchTrackingActivity : AppCompatActivity() {
             Log.d("DEBUG", "End Match button clicked")
         }
 
+        // Copilot helped to figure out how to make the team stats and player stats expandable
         ui.teamStatsContent.visibility = View.GONE
         var teamStatsExpanded = false
         ui.teamStatsTitle.setOnClickListener {
@@ -321,6 +321,7 @@ class MatchTrackingActivity : AppCompatActivity() {
                 lastAction = "tackle"
                 Log.d("DEBUG", "Tackle recorded for player: ${player.name}")
             }
+            // Copilot helped write and debug some of the confusing logic for the goal and behind actions
             "goal" -> {
                 if (lastAction != "kick") {
                     Log.w("DEBUG", "Goal action not allowed after ${lastAction}")
@@ -396,7 +397,7 @@ class MatchTrackingActivity : AppCompatActivity() {
      * @param actionType The type of action performed by the player.
      */
     private fun updateFirestore(player: Player, actionType: String) {
-        // Prepare updated player data for Firestore
+        // Prepare updated player data for Firestore (autocompleted by Copilot)
         val playerData = hashMapOf(
             "name" to player.name,
             "number" to player.number,
@@ -410,7 +411,7 @@ class MatchTrackingActivity : AppCompatActivity() {
             "actionTimestamps" to player.actionTimestamps
         )
 
-        // Prepare updated team score data
+        // Prepare updated team score data (autocompleted by Copilot)
         val scoreData = hashMapOf(
             "score.teamA.goals" to teamAGoals,
             "score.teamA.behinds" to teamABehinds,
@@ -444,7 +445,7 @@ class MatchTrackingActivity : AppCompatActivity() {
         Log.d("DEBUG", "Quarter $currentQuarter started")
         ui.btnQuarterToggle.text = "End Quarter $currentQuarter"
 
-        // Start the quarter timer
+        // Start the quarter timer (Copilot helped to debug issues with the timer)
         quarterTimer?.cancel()
         quarterTimer = object : CountDownTimer(quarterDuration, 1000) {
             override fun onTick(millisUntilFinished: Long) {
@@ -504,6 +505,7 @@ class MatchTrackingActivity : AppCompatActivity() {
         ui.txtTeamAScore.text = teamAScoreText
         ui.txtTeamBScore.text = teamBScoreText
 
+        // Copilot showed me how to use Color.parseColor to set the text color
         if (totalScoreA > totalScoreB) {
             ui.txtTeamAScore.setTextColor(Color.parseColor("#00FFFF"))
             ui.txtTeamBScore.setTextColor(Color.WHITE)
@@ -590,6 +592,7 @@ class MatchTrackingActivity : AppCompatActivity() {
         val teamAPlayers = players.filter { it.team == teamAName }
         val teamBPlayers = players.filter { it.team == teamBName }
 
+        // Much of the rest of this function was auto completed by Copilot
         val disposalsA = teamAPlayers.sumOf { it.kicks + it.handballs }
         val disposalsB = teamBPlayers.sumOf { it.kicks + it.handballs }
         val marksA = teamAPlayers.sumOf { it.marks }
@@ -628,6 +631,7 @@ class MatchTrackingActivity : AppCompatActivity() {
      * @param stat2 The stat value for the second team.
      */
     private fun statHighlighting(view1: TextView, view2: TextView, stat1: Int, stat2: Int) =
+        // Copilot showed me how to use Color.parseColor to set the text color
         if (stat1 > stat2) {
             view1.setTextColor(Color.parseColor("#00FFFF"))
             view2.setTextColor(Color.parseColor("#CCCCCC"))

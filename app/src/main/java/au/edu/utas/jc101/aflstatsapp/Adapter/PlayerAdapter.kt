@@ -38,6 +38,7 @@ class PlayerAdapter(
      * @return A new PlayerViewHolder instance.
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerViewHolder {
+        // Copilot created this function
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.player_item, parent, false)
         return PlayerViewHolder(view)
@@ -50,6 +51,7 @@ class PlayerAdapter(
      * @param position The position of the item in the list.
      */
     override fun onBindViewHolder(holder: PlayerViewHolder, position: Int) {
+        // Copilot assisted with debugging this
         val player = players[position]
         holder.txtPlayerNameNumber.text = "${player.name} (#${player.number})"
         holder.txtPlayerNameNumber.setTextColor(Color.WHITE)
