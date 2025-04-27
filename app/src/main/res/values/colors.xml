@@ -8,7 +8,7 @@
     <color name="colourOnSecondary">#000000</color>
 
     <!-- Background and Surface -->
-    <color name="colourBackground">#F5F5F5</color>
+    <color name="colourBackground">#FFFDF7</color>
     <color name="colourSurface">#FFFFFF</color>
     <color name="colourOnSurface">#121212</color>
 

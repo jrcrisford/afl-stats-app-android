@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import au.edu.utas.jc101.aflstatsapp.databinding.ActivityNewMatchBinding
@@ -69,39 +70,17 @@ class NewMatchActivity : AppCompatActivity() {
         val adapter = ArrayAdapter(this, R.layout.simple_spinner_item, teamNames)
         adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
 
-        ui.spinnerTeamA.adapter = adapter
-        ui.spinnerTeamB.adapter = adapter
+        (ui.dropdownTeamA as? AutoCompleteTextView)?.setAdapter(adapter)
+        (ui.dropdownTeamB as? AutoCompleteTextView)?.setAdapter(adapter)
 
-        ui.spinnerTeamA.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>,
-                view: View,
-                position: Int,
-                id: Long
-            ) {
-                selectedTeamA = teams[position]
-                updatePlayersUI(teamA = true)
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {
-                // Do nothing
-            }
+        ui.dropdownTeamA.setOnItemClickListener { parent, view, position, id ->
+            selectedTeamA = teams[position]
+            updatePlayersUI(teamA = true)
         }
 
-        ui.spinnerTeamB.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>,
-                view: View,
-                position: Int,
-                id: Long
-            ) {
-                selectedTeamB = teams[position]
-                updatePlayersUI(teamA = false)
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {
-                // Do nothing
-            }
+        ui.dropdownTeamB.setOnItemClickListener { parent, view, position, id ->
+            selectedTeamB = teams[position]
+            updatePlayersUI(teamA = false)
         }
     }
 
