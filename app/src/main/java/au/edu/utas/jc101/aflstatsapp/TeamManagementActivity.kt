@@ -1,6 +1,5 @@
 package au.edu.utas.jc101.aflstatsapp
 
-import android.R
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -35,7 +34,7 @@ class TeamManagementActivity : AppCompatActivity() {
 
         db = FirebaseFirestore.getInstance()
 
-        // Set up RecyclerView for players
+        // Set up RecyclerView for players (Help from copilot but written by me)
         playerAdapter = PlayerAdapter(
             playerList,
             onPlayerClicked = { clickedPlayer -> editPlayer(clickedPlayer) },
@@ -50,10 +49,14 @@ class TeamManagementActivity : AppCompatActivity() {
         ui.recyclerPlayers.adapter = playerAdapter
 
         // Set up Spinner for team selection
-        val sortOptions = listOf("Name A-Z", "Name Z-A", "Jersy Number")
-        val sortAdapter = ArrayAdapter(this, R.layout.simple_spinner_item, sortOptions)
-        sortAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
-        ui.spinnerSortPlayers.adapter = sortAdapter
+        val sortOptions = listOf("Name A-Z", "Name Z-A", "Jersey Number")
+        val sortAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, sortOptions)
+        ui.spinnerSortPlayers.setAdapter(sortAdapter)
+
+        ui.spinnerSortPlayers.setOnItemClickListener { parent, view, position, id ->
+            Log.d("DEBUG", "Sort option selected: ${sortOptions[position]}")
+            sortPlayerList()
+        }
 
         // Apply sorting to players
         ui.spinnerSortPlayers.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -94,8 +97,8 @@ class TeamManagementActivity : AppCompatActivity() {
         }
 
         // DEBUG: Add a debug team
-        val DebugMode = false
-        if (DebugMode) {
+        val debugMode = false
+        if (debugMode) {
             addDebugTeam()
         }
     }
@@ -109,6 +112,7 @@ class TeamManagementActivity : AppCompatActivity() {
             .addOnSuccessListener { documents ->
                 teams.clear()
 
+                // Copilot helped with the following but it was written by me, it also helped debug it
                 for (document in documents) {
                     val teamName = document.getString("name") ?: continue
                     val playersData = document.get("players") as? List<Map<String, Any>> ?: listOf()
@@ -136,14 +140,27 @@ class TeamManagementActivity : AppCompatActivity() {
      * Also handles the selection of a team.
      */
     private fun updateTeamSpinner() {
-        val teamNames = mutableListOf<String>("New Team")
+        val teamNames = mutableListOf("New Team")
         teamNames.addAll(teams.map { it.name })
 
-        val adapter = ArrayAdapter(this, R.layout.simple_spinner_item, teamNames)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        ui.spinnerSelectTeam.adapter = adapter
+        val teamAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, teamNames)
+        ui.spinnerSelectTeam.setAdapter(teamAdapter)
 
-        Log.d("DEBUG", "Team spinner updated with teams: $teamNames")
+        ui.spinnerSelectTeam.setOnItemClickListener { parent, view, position, id ->
+            val selectedName = parent.getItemAtPosition(position).toString()
+            Log.d("DEBUG", "Selected team: $selectedName")
+
+            if (selectedName == "New Team") {
+                ui.edtTeamName.setText("")
+                playerList.clear()
+                playerAdapter.notifyDataSetChanged()
+            } else {
+                val selectedTeam = teams.find { it.name == selectedName }
+                if (selectedTeam != null) {
+                    loadTeamData(selectedTeam)
+                }
+            }
+        }
 
         ui.spinnerSelectTeam.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
@@ -215,28 +232,26 @@ class TeamManagementActivity : AppCompatActivity() {
      * Sorts the player list based on the selected option in the spinner.
      */
     private fun sortPlayerList() {
-        when (ui.spinnerSortPlayers.selectedItemPosition) {
-            0 -> {
+        when (ui.spinnerSortPlayers.text.toString()) {
+            "Name A-Z" -> {
                 playerList.sortBy { it.name }
-                playerAdapter.notifyDataSetChanged()
                 Log.d("DEBUG", "Sorted players A-Z")
             }
-            1 -> {
+            "Name Z-A" -> {
                 playerList.sortByDescending { it.name }
-                playerAdapter.notifyDataSetChanged()
                 Log.d("DEBUG", "Sorted players Z-A")
             }
-            2 -> {
+            "Jersey Number" -> {
                 playerList.sortBy { it.number }
-                playerAdapter.notifyDataSetChanged()
                 Log.d("DEBUG", "Sorted players by jersey number")
             }
             else -> {
-                Log.w("DEBUG", "Unknown sort option selected")
+                Log.w("DEBUG", "Unknown sort option selected: ${ui.spinnerSortPlayers.text}")
             }
         }
         playerAdapter.notifyDataSetChanged()
     }
+
 
     /**
      * Saves the current team to Firestore.
@@ -254,6 +269,7 @@ class TeamManagementActivity : AppCompatActivity() {
             return
         }
 
+        // Copilot taught me how to make these
         val teamData = hashMapOf(
             "name" to teamName,
             "players" to playerList.map { player ->
@@ -288,7 +304,7 @@ class TeamManagementActivity : AppCompatActivity() {
             }
     }
 
-    //COPILOT
+    //ENTIRELY WRITTEN BY COPILOT
     private fun addDebugTeam() {
         val debugPlayers = mutableListOf<Player>()
         for (i in 1..8) {
@@ -329,7 +345,7 @@ class TeamManagementActivity : AppCompatActivity() {
             }
     }
 
-    //COPILOT
+    //ENTIRELY WRITTEN BY COPILOT
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         activePlayerDialog?.handleResult(requestCode, resultCode, data)

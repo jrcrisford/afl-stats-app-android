@@ -1,11 +1,8 @@
 package au.edu.utas.jc101.aflstatsapp
 
-import android.R
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -30,26 +27,15 @@ class PlayerComparisonActivity : AppCompatActivity() {
 
         Log.d("DEBUG", "Comparing Player 1: ${player1.name}, Player 2: ${player2.name}")
 
+        // Setup quarter filter
         val quarters = listOf("Full Match", "Q1", "Q2", "Q3", "Q4")
-        val quarterAdapter = ArrayAdapter(this, R.layout.simple_spinner_item, quarters)
-        quarterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        ui.spinnerQuarterFilter.adapter = quarterAdapter
+        val quarterAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, quarters)
+        ui.quarterFilter.setAdapter(quarterAdapter)
 
-        ui.spinnerQuarterFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>,
-                view: View,
-                position: Int,
-                id: Long
-            ) {
-                selectedQuarter = position
-                Log.d("DEBUG", "Selected quarter: $selectedQuarter")
-                displayPlayerStats()
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {
-                // Do nothing
-            }
+        ui.quarterFilter.setOnItemClickListener { parent, view, position, id ->
+            selectedQuarter = position
+            Log.d("DEBUG", "Selected quarter: $selectedQuarter")
+            displayPlayerStats()
         }
 
         // Display the loaded player stats
@@ -91,6 +77,7 @@ class PlayerComparisonActivity : AppCompatActivity() {
                 as? Long)?.toInt() == selectedQuarter }
         )
 
+        //Copied from above by Copilot
         val filtered2 = if (selectedQuarter == 0) player2 else player2.copy(
             kicks = player2.actionTimestamps.count {
                 it["action"] == "kick" && (it["quarter"]

@@ -1,6 +1,7 @@
 package au.edu.utas.jc101.aflstatsapp
 
 import android.app.AlertDialog
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -51,6 +52,7 @@ class PlayerAdapter(
     override fun onBindViewHolder(holder: PlayerViewHolder, position: Int) {
         val player = players[position]
         holder.txtPlayerNameNumber.text = "${player.name} (#${player.number})"
+        holder.txtPlayerNameNumber.setTextColor(Color.WHITE)
 
         // Handle click for editing player
         holder.itemView.setOnClickListener {onPlayerClicked(player)}
