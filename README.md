@@ -19,6 +19,40 @@ To test this application, please use the following device/emulator configuration
 - **Screen Size**: 6.0 inches or larger
 - **Emulator**: Samsung Galaxy S25+ (used for testing)
 
+### How to Start a Match
+
+To begin a match, follow these steps:
+
+1. **Create Teams and Players**:
+    - Navigate to the Team Manager and create a team with at least two players.
+    - For convenience, two pre-filled teams, **Hobart Hawks** and **Launceston Lions**, are available. These can be selected directly or modified in the Team Manager to test adding, removing, and editing players.
+
+2. **Resetting Teams**:
+    - If you wish to reset the pre-filled teams, set the `debug` variable in `activity_main` to `true` and restart the app.
+
+3. **Starting a New Match**:
+    - Select "New Match" from the main menu.
+    - Choose the two teams that will play (you can use the pre-filled teams if desired).
+    - Proceed to the Match Tracking screen.
+
+4. **Recording Actions**:
+    - On the Match Tracking screen, press the **Start Quarter** button to begin recording player actions.
+    - View player and team statistics directly on this screen.
+
+5. **Ending the Match**:
+    - Once all quarters are completed, press the **End Match** button at the bottom of the screen.
+
+6. **Viewing Match History**:
+    - Access the Match History from the main menu.
+    - Select a match to view detailed statistics, including:
+      - Player and team stats (expandable cards for detailed data).
+      - Player stats comparison.
+      - Game scores (overall and by quarter).
+      - A list of recorded actions, which can be exported.
+
+### Pre-Filled Match for Testing
+For ease of testing, a pre-filled match named **debug_match_001** is available. This match includes players with recorded actions, allowing you to explore the app's features without needing to create new data.
+
 ---
 
 ## References
