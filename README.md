@@ -1,11 +1,10 @@
-# kit305-assignment2-jc101
-# AFL Stats App
+# KIT305 - Assignment 4 - Cross Platform App (Flutter)
 
 ## Author Information
 - **Name**: Joshua Crisford
 - **Student ID**: 574082
 - **Unit**: KIT305 - Mobile Application Development
-- **Assignment**: Assignment 2
+- **Assignment**: Assignment 2 - Native Android Application
 
 ## Overview
 This project is an Android application designed to track and manage Australian Football League (AFL) statistics. It allows users to create teams and players, record player actions, compare players and teams, and view match history. The app is built using Kotlin and integrates with Firebase for data storage.
@@ -277,3 +276,9 @@ In future development, the MVP system could be expanded to consider a wider rang
 - View Binding is enabled for easier UI management.
 - The app is optimized for Android 12 and above.
 - The app's layout mostly uses Material3 components for customisability.
+
+---
+
+## License
+
+This prototype is part of a university assessment and not licensed for commercial use. All original work © Joshua Crisford.
