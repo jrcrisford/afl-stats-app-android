@@ -1,4 +1,4 @@
-# KIT305 - Assignment 4 - Cross Platform App (Flutter)
+# KIT305 - Assignment 2 - Android Application
 
 ## Author Information
 - **Name**: Joshua Crisford
